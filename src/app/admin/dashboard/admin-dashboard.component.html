@@ -1,0 +1,1255 @@
+<!-- src/app/admin/dashboard/admin-dashboard.component.html -->
+<div class="min-h-screen bg-slate-950 flex">
+
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-2.5 px-6 py-5 border-b border-slate-800">
+      <div class="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center border border-sky-500/40">
+        <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <span class="text-white font-bold text-base tracking-tight block truncate">
+          {{ auth.currentUser$()?.nombreEmpresa || 'WorkflowPro' }}
+        </span>
+        <span class="text-slate-500 text-xs">WorkflowPro</span>
+      </div>
+    </div>
+
+    <!-- Role badge -->
+    <div class="px-6 py-3 border-b border-slate-800">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 text-xs font-bold uppercase">
+          {{ auth.currentUser$()?.nombreCompleto?.charAt(0) }}
+        </div>
+        <div class="min-w-0">
+          <p class="text-white text-sm font-medium truncate">{{ auth.currentUser$()?.nombreCompleto }}</p>
+          <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">
+            {{ auth.currentUser$()?.rol }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-4 space-y-1">
+
+      <button (click)="navigate('dashboard')"
+        [class.bg-sky-500]="activeSection() === 'dashboard'"
+        [class.text-white]="activeSection() === 'dashboard'"
+        [class.text-slate-400]="activeSection() !== 'dashboard'"
+        [class.hover:bg-slate-800]="activeSection() !== 'dashboard'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        Dashboard
+      </button>
+
+      <button (click)="navigate('departamentos')"
+        [class.bg-sky-500]="activeSection() === 'departamentos'"
+        [class.text-white]="activeSection() === 'departamentos'"
+        [class.text-slate-400]="activeSection() !== 'departamentos'"
+        [class.hover:bg-slate-800]="activeSection() !== 'departamentos'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+        </svg>
+        Departamentos
+      </button>
+
+      <button (click)="navigate('usuarios')"
+        [class.bg-sky-500]="activeSection() === 'usuarios'"
+        [class.text-white]="activeSection() === 'usuarios'"
+        [class.text-slate-400]="activeSection() !== 'usuarios'"
+        [class.hover:bg-slate-800]="activeSection() !== 'usuarios'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+        </svg>
+        Usuarios
+      </button>
+
+      <button (click)="abrirPizarra()"
+        [class.bg-sky-500]="activeSection() === 'pizarra'"
+        [class.text-white]="activeSection() === 'pizarra'"
+        [class.text-slate-400]="activeSection() !== 'pizarra'"
+        [class.hover:bg-slate-800]="activeSection() !== 'pizarra'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+          transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/>
+        </svg>
+        Pizarra
+      </button>
+
+      <button (click)="navigate('flujos')"
+        [class.bg-sky-500]="activeSection() === 'flujos'"
+        [class.text-white]="activeSection() === 'flujos'"
+        [class.text-slate-400]="activeSection() !== 'flujos'"
+        [class.hover:bg-slate-800]="activeSection() !== 'flujos'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+        </svg>
+        Flujos Publicados
+      </button>
+
+      <button (click)="navigate('tareas')"
+        [class.bg-sky-500]="activeSection() === 'tareas' || activeSection() === 'formulario'"
+        [class.text-white]="activeSection() === 'tareas' || activeSection() === 'formulario'"
+        [class.text-slate-400]="activeSection() !== 'tareas' && activeSection() !== 'formulario'"
+        [class.hover:bg-slate-800]="activeSection() !== 'tareas' && activeSection() !== 'formulario'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        <span class="flex-1 text-left">Mis Tareas</span>
+        @if ((tareasPendientes().length + tareasEnAtencion().length) > 0) {
+          <span class="min-w-[1.25rem] h-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+            {{ tareasPendientes().length + tareasEnAtencion().length }}
+          </span>
+        }
+      </button>
+
+    </nav>
+
+    <!-- Logout -->
+    <div class="px-3 py-4 border-t border-slate-800">
+      <button (click)="logout()"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+          text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════ MAIN ══════════════════════════ -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Top bar -->
+    @if (activeSection() !== 'pizarra') {
+      <header class="bg-slate-900 border-b border-slate-800 px-8 py-4 flex items-center justify-between">
+        <h2 class="text-white font-semibold text-lg capitalize">
+          @switch (activeSection()) {
+            @case ('dashboard') { Panel de Control }
+            @case ('usuarios') { Gestión de Usuarios }
+            @case ('departamentos') { Gestión de Departamentos }
+            @case ('roles') { Gestión de Roles }
+            @case ('flujos') { Flujos Publicados }
+            @case ('tareas') { Mis Tareas }
+            @case ('formulario') { Completar Tarea — {{ nodoActualLabel() }} }
+            @case ('pizarra') { Pizarra }
+          }
+        </h2>
+
+        <!-- Bell + notificaciones -->
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <button (click)="toggleDropdownNotificaciones()"
+              class="relative p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+              </svg>
+              @if (badgeNotificaciones() > 0) {
+                <span class="absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-4 px-0.5 rounded-full bg-red-500
+                  text-white text-[10px] font-bold flex items-center justify-center">
+                  {{ badgeNotificaciones() }}
+                </span>
+              }
+            </button>
+
+            @if (dropdownNotificacionesAbierto()) {
+              <div class="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+                  <span class="text-white text-sm font-semibold">Notificaciones</span>
+                  <button (click)="limpiarNotificaciones()"
+                    class="text-slate-500 hover:text-red-400 text-xs transition-colors">Limpiar</button>
+                </div>
+                @if (notificaciones().length === 0) {
+                  <p class="text-slate-500 text-sm text-center py-6">Sin notificaciones</p>
+                } @else {
+                  <ul class="divide-y divide-slate-800 max-h-72 overflow-y-auto">
+                    @for (n of notificaciones(); track n.timestamp) {
+                      <li class="px-4 py-3 hover:bg-slate-800/50 cursor-pointer" (click)="navigate('tareas')">
+                        <p class="text-white text-xs font-medium">{{ n.mensaje }}</p>
+                        <p class="text-slate-500 text-[10px] mt-0.5">{{ n.timestamp | date:'HH:mm' }}</p>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+
+          <span class="text-slate-500 text-sm">Administración y Diseño</span>
+        </div>
+      </header>
+    }
+
+    <!-- Content -->
+    <div class="flex-1" [class.overflow-auto]="activeSection() !== 'pizarra'" [class.overflow-hidden]="activeSection() === 'pizarra'" [class.p-8]="activeSection() !== 'pizarra'">
+
+      <!-- ═══════════════ PIZARRA ═══════════════ -->
+      @if (activeSection() === 'pizarra') {
+        <iframe
+          class="w-full h-full border-0"
+          [src]="pizarraSafeUrl()"
+          title="Pizarra de flujos">
+        </iframe>
+      }
+
+      <!-- ═══════════════ DASHBOARD ═══════════════ -->
+      @if (activeSection() === 'dashboard') {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <p class="text-slate-400 text-sm mb-2">Total Usuarios</p>
+            <p class="text-4xl font-bold text-white">{{ usuarios().length }}</p>
+            <p class="text-slate-500 text-xs mt-1">{{ usuarios().filter(u => u.activo).length }} activos</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <p class="text-slate-400 text-sm mb-2">Departamentos</p>
+            <p class="text-4xl font-bold text-white">{{ departamentos().length }}</p>
+            <p class="text-slate-500 text-xs mt-1">{{ departamentos().filter(d => d.activo).length }} activos</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <p class="text-slate-400 text-sm mb-2">Tu Rol</p>
+            <p class="text-4xl font-bold text-sky-400">ADM</p>
+            <p class="text-slate-500 text-xs mt-1">Acceso total al sistema</p>
+          </div>
+        </div>
+
+        <!-- Gráfica de barras: usuarios por departamento -->
+        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="mb-5">
+            <h3 class="text-white font-semibold text-base">Usuarios por departamento</h3>
+            <p class="text-slate-500 text-xs mt-0.5">Usuarios activos · ordenados de mayor a menor</p>
+          </div>
+
+          @if (graficoDepto().data.length > 0) {
+            <div class="flex gap-0">
+
+              <!-- Eje Y: etiquetas -->
+              <div class="relative shrink-0" style="width: 32px; height: 240px">
+                @for (div of graficoDepto().yDivisions; track div) {
+                  <span
+                    class="absolute right-1 text-xs text-slate-500 leading-none -translate-y-1/2"
+                    [style.bottom.%]="(div / graficoDepto().yMax) * 100">
+                    {{ div }}
+                  </span>
+                }
+              </div>
+
+              <!-- Área de trazado -->
+              <div class="relative flex-1 border-l border-b border-slate-600" style="height: 240px">
+
+                <!-- Líneas horizontales de cuadrícula -->
+                @for (div of graficoDepto().yDivisions; track div) {
+                  <div
+                    class="absolute left-0 right-0 border-t border-slate-700/50"
+                    [style.bottom.%]="(div / graficoDepto().yMax) * 100">
+                  </div>
+                }
+
+                <!-- Columnas de barras -->
+                <div class="absolute inset-0 flex items-stretch px-3 gap-2">
+                  @for (item of graficoDepto().data; track item.nombre) {
+                    <div class="flex-1 relative">
+
+                      <!-- Barra -->
+                      <div
+                        class="absolute bottom-0 left-1 right-1 rounded-t-md transition-all duration-700"
+                        [style.height.%]="graficoDepto().yMax > 0 ? (item.count / graficoDepto().yMax) * 100 : 0"
+                        [style.background-color]="item.color"
+                        [title]="item.nombre + ': ' + item.count + ' usuarios'">
+                      </div>
+
+                      <!-- Número encima de la barra -->
+                      @if (item.count > 0) {
+                        <div
+                          class="absolute left-0 right-0 text-center text-xs font-semibold leading-none pointer-events-none"
+                          [style.bottom.%]="(item.count / graficoDepto().yMax) * 100"
+                          [style.color]="item.color"
+                          style="transform: translateY(-7px)">
+                          {{ item.count }}
+                        </div>
+                      }
+
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Eje X: nombres de departamentos -->
+            <div class="flex mt-2 gap-2" style="padding-left: 36px">
+              @for (item of graficoDepto().data; track item.nombre) {
+                <div
+                  class="flex-1 text-center text-xs text-slate-400 truncate leading-tight px-0.5"
+                  [title]="item.nombre">
+                  {{ item.nombre }}
+                </div>
+              }
+            </div>
+
+          } @else {
+            <div class="flex items-center justify-center h-32 text-slate-600 text-sm">
+              Sin datos de departamentos disponibles
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ USUARIOS ═══════════════ -->
+      @if (activeSection() === 'usuarios') {
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-white font-semibold text-lg">Usuarios del sistema</h3>
+            <button (click)="openCreateUserModal()"
+              class="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white
+                font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg shadow-sky-500/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              Crear usuario
+            </button>
+          </div>
+
+          @if (usuariosLoading()) {
+            <div class="text-slate-400 text-sm">Cargando...</div>
+          } @else {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-800/50 border-b border-slate-800">
+                  <tr>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Nombre</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Correo</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Rol</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Departamento</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Estado</th>
+                    <th class="text-right px-6 py-3.5 text-slate-400 font-medium">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  @for (user of usuarios(); track user.id) {
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center
+                            text-white text-xs font-bold uppercase">
+                            {{ user.nombreCompleto.charAt(0) }}
+                          </div>
+                          <div>
+                            <p class="text-white font-medium">{{ user.nombreCompleto }}</p>
+                            <p class="text-slate-500 text-xs">&#64;{{ user.nombreUsuario }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-slate-300">{{ user.correo }}</td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border"
+                          [class]="getRolBadgeClass(user.rol)">
+                          {{ user.rol }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-slate-400 text-xs">{{ getDepartamentoNombre(user.idDepartamento) }}</td>
+                      <td class="px-6 py-4">
+                        <span [class]="user.activo
+                          ? 'bg-green-500/15 text-green-400 border-green-500/30'
+                          : 'bg-slate-600/15 text-slate-500 border-slate-600/30'"
+                          class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border">
+                          {{ user.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <button (click)="openEditUserModal(user)"
+                            class="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/>
+                            </svg>
+                          </button>
+                          @if (user.activo) {
+                            <button (click)="deleteUser(user.id)"
+                              title="Eliminar usuario"
+                              class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                              </svg>
+                            </button>
+                          } @else {
+                            <button (click)="reactivateUser(user.id)"
+                              title="Reactivar usuario"
+                              class="p-1.5 text-slate-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all">
+                              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                              </svg>
+                            </button>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              @if (usuarios().length === 0) {
+                <div class="text-center py-12 text-slate-500 text-sm">No hay usuarios registrados</div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ DEPARTAMENTOS ═══════════════ -->
+      @if (activeSection() === 'departamentos') {
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-white font-semibold text-lg">Departamentos</h3>
+            <button (click)="openCreateDepModal()"
+              class="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white
+                font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg shadow-sky-500/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              Crear departamento
+            </button>
+          </div>
+
+          @if (depLoading()) {
+            <div class="text-slate-400 text-sm">Cargando...</div>
+          } @else {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-800/50 border-b border-slate-800">
+                  <tr>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Código</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Nombre</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Descripción</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Color</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Miembros</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Estado</th>
+                    <th class="text-right px-6 py-3.5 text-slate-400 font-medium">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  @for (dep of departamentos(); track dep.id) {
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                      <td class="px-6 py-4">
+                        <span class="font-mono text-sky-400 text-xs bg-sky-500/10 px-2 py-1 rounded">
+                          {{ dep.codigo }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-white font-medium">{{ dep.nombre }}</td>
+                      <td class="px-6 py-4 text-slate-400 text-xs max-w-xs truncate">{{ dep.descripcion || '—' }}</td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="w-5 h-5 rounded-full border border-slate-700"
+                            [style.background]="dep.color"></div>
+                          <span class="text-slate-400 text-xs font-mono">{{ dep.color }}</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-slate-300">{{ getMembersCount(dep) }}</td>
+                      <td class="px-6 py-4">
+                        <span [class]="dep.activo
+                          ? 'bg-green-500/15 text-green-400 border-green-500/30'
+                          : 'bg-slate-600/15 text-slate-500 border-slate-600/30'"
+                          class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border">
+                          {{ dep.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <button (click)="openEditDepModal(dep)"
+                            class="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/>
+                            </svg>
+                          </button>
+                          @if (dep.activo) {
+                            <button (click)="deleteDep(dep.id)"
+                              title="Eliminar departamento"
+                              class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                              </svg>
+                            </button>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              @if (departamentos().length === 0) {
+                <div class="text-center py-12 text-slate-500 text-sm">No hay departamentos registrados</div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ ROLES ═══════════════ -->
+      @if (activeSection() === 'roles') {
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-white font-semibold text-lg">Roles del sistema</h3>
+            <button (click)="openCreateRolModal()"
+              class="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white
+                font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg shadow-sky-500/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              Crear rol
+            </button>
+          </div>
+
+          @if (rolesLoading()) {
+            <div class="text-slate-400 text-sm">Cargando...</div>
+          } @else {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-800/50 border-b border-slate-800">
+                  <tr>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Nombre del rol</th>
+                    <th class="text-left px-6 py-3.5 text-slate-400 font-medium">Permisos</th>
+                    <th class="text-right px-6 py-3.5 text-slate-400 font-medium">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  @for (rol of rolesList(); track rol.id) {
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                      <td class="px-6 py-4">
+                        <span class="text-white font-medium">{{ rol.nombreRol }}</span>
+                      </td>
+                      <td class="px-6 py-4">
+                        @if (rol.permisos.length) {
+                          <div class="flex flex-wrap gap-1">
+                            @for (p of rol.permisos; track p) {
+                              <span class="px-2 py-0.5 rounded-full text-xs bg-slate-700 text-slate-300">{{ p }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-slate-500 text-xs">Sin permisos</span>
+                        }
+                      </td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <button (click)="openEditRolModal(rol)"
+                            class="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/>
+                            </svg>
+                          </button>
+                          <button (click)="deleteRol(rol.id)"
+                            class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              @if (rolesList().length === 0) {
+                <div class="text-center py-12 text-slate-500 text-sm">No hay roles registrados</div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ FLUJOS PUBLICADOS ═══════════════ -->
+      @if (activeSection() === 'flujos') {
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-white font-semibold text-lg">Flujos Publicados</h3>
+            <button (click)="loadFlujos()"
+              class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                     text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 border border-slate-700
+                     transition-all duration-200">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Recargar
+            </button>
+          </div>
+
+          @if (flujosLoading()) {
+            <div class="text-slate-400 text-sm">Cargando flujos...</div>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              @for (flujo of flujos(); track flujo.id) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3
+                            hover:border-slate-600 transition-colors">
+
+                  <!-- Header tarjeta -->
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <p class="text-white font-semibold truncate text-sm">{{ flujo.titulo }}</p>
+                      @if (flujo.descripcion) {
+                        <p class="text-slate-500 text-xs mt-0.5 line-clamp-2">{{ flujo.descripcion }}</p>
+                      }
+                    </div>
+                    <span class="shrink-0 inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border"
+                      [class]="estadoBadgeClass(flujo.estado)">
+                      {{ flujo.estado ?? '—' }}
+                    </span>
+                  </div>
+
+                  <!-- Meta -->
+                  <div class="flex items-center gap-3 text-xs text-slate-500">
+                    @if (flujo.slug) {
+                      <span class="font-mono bg-slate-800 px-1.5 py-0.5 rounded text-slate-400">
+                        {{ flujo.slug }}
+                      </span>
+                    }
+                    @if (flujo.fechaActualizacion) {
+                      <span>{{ flujo.fechaActualizacion | date:'dd/MM/yyyy' }}</span>
+                    }
+                  </div>
+
+                  <!-- Acciones -->
+                  <div class="flex gap-2 mt-auto pt-1">
+                    <button (click)="irAlEditor(flujo.id!)"
+                      class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs
+                             font-medium bg-sky-500/10 text-sky-400 border border-sky-500/30
+                             hover:bg-sky-500/20 transition-colors">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                      </svg>
+                      Abrir en editor
+                    </button>
+                  </div>
+
+                </div>
+              }
+            </div>
+            @if (flujos().length === 0) {
+              <div class="flex flex-col items-center justify-center py-16 text-slate-500 text-sm text-center">
+                <svg class="w-10 h-10 mb-3 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                </svg>
+                <p>No hay flujos publicados aún.</p>
+                <p class="text-slate-600 text-xs mt-1">Publícalos desde la Pizarra.</p>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ MIS TAREAS ═══════════════ -->
+      @if (activeSection() === 'tareas') {
+        <div>
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-white font-semibold text-lg">Tareas del departamento</h3>
+              <p class="text-slate-500 text-xs mt-0.5">{{ auth.currentUser$()?.departamentoNombre ?? deptCodigo() }}</p>
+            </div>
+            <button (click)="cargarTareas(deptCodigo())"
+              class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 border border-slate-700 transition-all">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Recargar
+            </button>
+          </div>
+
+          @if (cargandoTareas()) {
+            <div class="flex items-center gap-3 text-slate-400 text-sm py-12 justify-center">
+              <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+              Cargando tareas...
+            </div>
+          } @else {
+
+            <!-- Tareas nuevas (ROJO) -->
+            <div class="mb-8">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0"></span>
+                <h4 class="text-slate-300 text-sm font-semibold">Tareas nuevas</h4>
+                <span class="ml-auto text-slate-500 text-xs">{{ tareasPendientes().length }}</span>
+              </div>
+              @if (tareasPendientes().length === 0) {
+                <p class="text-slate-600 text-sm py-6 text-center border border-slate-800 rounded-xl">Sin tareas nuevas</p>
+              } @else {
+                <div class="space-y-3">
+                  @for (tarea of tareasPendientes(); track tarea.id) {
+                    <div class="bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl p-4
+                      flex items-center justify-between gap-4 transition-colors">
+                      <div class="min-w-0">
+                        <p class="text-white text-sm font-medium truncate">
+                          {{ tarea.datos?.['nombreFlujo'] || tarea.idInstancia }}
+                        </p>
+                        <p class="text-slate-500 text-xs mt-0.5">Nodo: {{ tarea.idNodo }}</p>
+                        @if (tarea.datos?.['codigoCaso']) {
+                          <p class="text-slate-600 text-xs mt-0.5">{{ tarea.datos?.['codigoCaso'] }}</p>
+                        }
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border"
+                          [class]="getSemaforoColor(tarea.semaforo)">
+                          <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                          {{ tarea.semaforo }}
+                        </span>
+                        <button (click)="tomarTarea(tarea.id)"
+                          class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold
+                            rounded-lg transition-colors">
+                          Tomar tarea
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Tareas en proceso (AMARILLO) -->
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
+                <h4 class="text-slate-300 text-sm font-semibold">En proceso</h4>
+                <span class="ml-auto text-slate-500 text-xs">{{ tareasEnAtencion().length }}</span>
+              </div>
+              @if (tareasEnAtencion().length === 0) {
+                <p class="text-slate-600 text-sm py-6 text-center border border-slate-800 rounded-xl">Sin tareas en proceso</p>
+              } @else {
+                <div class="space-y-3">
+                  @for (tarea of tareasEnAtencion(); track tarea.id) {
+                    <div class="bg-slate-900 border border-yellow-500/20 hover:border-yellow-500/40 rounded-xl p-4
+                      flex items-center justify-between gap-4 transition-colors">
+                      <div class="min-w-0">
+                        <p class="text-white text-sm font-medium truncate">
+                          {{ tarea.datos?.['nombreFlujo'] || tarea.idInstancia }}
+                        </p>
+                        <p class="text-slate-500 text-xs mt-0.5">Nodo: {{ tarea.idNodo }}</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Asignado a {{ tarea.idUsuarioAsignado ?? 'ti' }}</p>
+                        @if (tarea.datos?.['codigoCaso']) {
+                          <p class="text-slate-600 text-xs mt-0.5">{{ tarea.datos?.['codigoCaso'] }}</p>
+                        }
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border"
+                          [class]="getSemaforoColor(tarea.semaforo)">
+                          <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                          {{ tarea.semaforo }}
+                        </span>
+                        <button (click)="continuarTarea(tarea.id)"
+                          class="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 text-xs font-semibold
+                            rounded-lg border border-yellow-500/30 transition-colors">
+                          Continuar
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+          }
+        </div>
+      }
+
+      <!-- ═══════════════ FORMULARIO DE TAREA ═══════════════ -->
+      @if (activeSection() === 'formulario') {
+        <div class="max-w-2xl mx-auto">
+          <div class="flex items-center gap-3 mb-6">
+            <button (click)="navigate('tareas')"
+              class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+              </svg>
+            </button>
+            <div>
+              <h3 class="text-white font-semibold">{{ nodoActualLabel() || 'Completar tarea' }}</h3>
+              <p class="text-slate-500 text-xs mt-0.5">Rellena el formulario y envía</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+
+            @if (departamentosDestino().length > 0) {
+              <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
+                <h4 class="text-slate-200 text-sm font-semibold mb-1">Departamento destino (documentos)</h4>
+                <p class="text-sm text-slate-300">{{ departamentosDestino().join(', ') }}</p>
+              </div>
+            }
+
+            @if (tieneDatosEntrada()) {
+              <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
+                <h4 class="text-slate-200 text-sm font-semibold mb-2">Datos del trámite</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  @for (item of (datosEntrada() | keyvalue); track item.key) {
+                    <div class="bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2">
+                      <p class="text-[11px] text-slate-500 uppercase tracking-wider">{{ item.key }}</p>
+                      <p class="text-sm text-slate-200 break-words">{{ item.value }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (crearUsuarioCliente()) {
+              <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="text-slate-200 text-sm font-semibold">Crear usuario cliente</h4>
+                  @if (clienteCreado()) {
+                    <span class="text-xs text-green-400">Asociado</span>
+                  }
+                </div>
+                <div class="space-y-3">
+                  <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-3">
+                    <label class="text-xs text-slate-500 uppercase tracking-wider">Buscar cliente existente</label>
+                    <input
+                      type="text"
+                      [ngModel]="clienteFiltro()"
+                      (ngModelChange)="clienteFiltro.set($event)"
+                      placeholder="Buscar por nombre, correo o usuario"
+                      class="mt-2 w-full bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-600
+                        rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" />
+
+                    <select
+                      class="mt-2 w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-lg px-3 py-2 text-sm
+                        focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      [ngModel]="clienteSeleccionadoId()"
+                      (ngModelChange)="clienteSeleccionadoId.set($event)">
+                      <option value="">— Selecciona un cliente —</option>
+                      @for (cliente of clientesFiltrados(); track cliente.id) {
+                        <option [value]="cliente.id">{{ cliente.nombreCompleto }} · {{ cliente.correo }}</option>
+                      }
+                    </select>
+
+                    @if (clienteAsociado()) {
+                      <p class="text-xs text-slate-500 mt-2">Cliente asociado</p>
+                      <p class="text-sm text-slate-200">{{ clienteAsociado()?.nombreCompleto }} · {{ clienteAsociado()?.correo }}</p>
+                    }
+
+                    <button
+                      (click)="asignarClienteExistente()"
+                      [disabled]="clienteCreado() || creandoCliente() || !clienteSeleccionadoId()"
+                      class="mt-3 w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50
+                        text-white text-sm font-semibold rounded-lg transition-colors">
+                      Asociar al flujo
+                    </button>
+                  </div>
+
+                  @if (!clienteAsociado() && !clienteSeleccionadoId()) {
+                    <div>
+                      <label class="text-xs text-slate-500 uppercase tracking-wider">Correo sugerido</label>
+                      <p class="text-sm text-slate-200 mt-1">{{ correoSugerido() || '—' }}</p>
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-500 uppercase tracking-wider">Contraseña</label>
+                      <input
+                        type="text"
+                        [ngModel]="contrasenaCliente()"
+                        (ngModelChange)="contrasenaCliente.set($event)"
+                        placeholder="Ingresa una contraseña"
+                        class="mt-1 w-full bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-600
+                          rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        [disabled]="clienteCreado()" />
+                    </div>
+                    <button
+                      (click)="crearUsuarioClienteDesdeTarea()"
+                      [disabled]="clienteCreado() || creandoCliente()"
+                      class="w-full px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50
+                        text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                      @if (creandoCliente()) {
+                        <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      }
+                      {{ clienteCreado() ? 'Cliente ya asociado' : 'Crear usuario cliente' }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+            @for (campo of camposFormulario(); track campo.nombre) {
+              <div>
+                <label class="block text-slate-300 text-sm font-medium mb-2">
+                  {{ campo.nombre }}
+                  @if (campo.requerido) {
+                    <span class="text-red-400 ml-0.5">*</span>
+                  }
+                </label>
+                    @if (campo.ayuda) {
+                      <p class="text-xs text-slate-500 mb-2">{{ campo.ayuda }}</p>
+                    }
+
+                @if (campo.tipo === 'texto') {
+                  <input type="text"
+                    [(ngModel)]="datosFormulario()[campo.nombre]"
+                    class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                      placeholder-slate-500 focus:border-sky-500 focus:outline-none transition-colors"
+                    [placeholder]="campo.nombre"
+                    [required]="campo.requerido" />
+                }
+
+                @if (campo.tipo === 'imagen') {
+                  <label class="flex items-center gap-3 px-4 py-3 bg-slate-800 border border-slate-700
+                    hover:border-sky-500/50 rounded-lg cursor-pointer transition-colors group">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      @if (datosFormulario()[campo.nombre]) {
+                        <span class="text-sky-400 text-sm font-medium truncate block">{{ datosFormulario()[campo.nombre] }}</span>
+                      } @else {
+                        <span class="text-slate-400 text-sm">Seleccionar imagen (JPG, PNG)</span>
+                      }
+                    </div>
+                    <span class="text-slate-500 text-xs shrink-0">Imagen</span>
+                    <input type="file" accept="image/*" class="hidden"
+                      (change)="onArchivoSeleccionado($event, campo.nombre)" />
+                  </label>
+                }
+
+                @if (campo.tipo === 'pdf') {
+                  <label class="flex items-center gap-3 px-4 py-3 bg-slate-800 border border-slate-700
+                    hover:border-sky-500/50 rounded-lg cursor-pointer transition-colors group">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      @if (datosFormulario()[campo.nombre]) {
+                        <span class="text-sky-400 text-sm font-medium truncate block">{{ datosFormulario()[campo.nombre] }}</span>
+                      } @else {
+                        <span class="text-slate-400 text-sm">Seleccionar documento (PDF)</span>
+                      }
+                    </div>
+                    <span class="text-slate-500 text-xs shrink-0">PDF</span>
+                    <input type="file" accept=".pdf,application/pdf" class="hidden"
+                      (change)="onArchivoSeleccionado($event, campo.nombre)" />
+                  </label>
+                }
+
+                @if (campo.tipo === 'fecha') {
+                  <input type="date"
+                    [(ngModel)]="datosFormulario()[campo.nombre]"
+                    class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                      focus:border-sky-500 focus:outline-none transition-colors [color-scheme:dark]"
+                    [required]="campo.requerido" />
+                }
+
+                @if (campo.tipo === 'sino') {
+                  <div class="flex items-center gap-3">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox"
+                        [(ngModel)]="datosFormulario()[campo.nombre]"
+                        class="sr-only peer">
+                      <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full
+                        peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px]
+                        after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5
+                        after:transition-all peer-checked:bg-sky-600">
+                      </div>
+                    </label>
+                    <span class="text-slate-400 text-sm">{{ datosFormulario()[campo.nombre] ? 'Sí' : 'No' }}</span>
+                  </div>
+                }
+
+                @if (campo.tipo === 'readonly') {
+                  <p class="text-slate-500 text-sm px-4 py-2.5 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                    {{ campo.valor || '—' }}
+                  </p>
+                }
+              </div>
+            }
+
+            <!-- Botones -->
+            <div class="flex gap-3 pt-2">
+              <button (click)="navigate('tareas')"
+                class="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium
+                  rounded-xl text-sm transition-colors">
+                Cancelar
+              </button>
+              <button (click)="completarTarea()" [disabled]="guardandoFormulario()"
+                class="flex-1 px-4 py-2.5 bg-sky-500 hover:bg-sky-400 disabled:bg-sky-500/40
+                  text-white font-semibold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors">
+                @if (guardandoFormulario()) {
+                  <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                }
+                Completar y enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  </main>
+</div>
+
+<!-- Toast -->
+@if (toastNotificacion()) {
+  <div class="fixed bottom-6 right-6 z-[100] max-w-sm px-5 py-3.5 bg-slate-800 border border-slate-700
+    rounded-2xl shadow-2xl text-white text-sm font-medium animate-in slide-in-from-bottom-4 duration-300
+    flex items-center gap-3">
+    <svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+    </svg>
+    {{ toastNotificacion() }}
+  </div>
+}
+
+<!-- ══════════════════════════ MODAL USUARIO ══════════════════════════ -->
+@if (showUserModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+
+      @if (tempPasswordShown()) {
+        <!-- Temp password screen -->
+        <h3 class="text-white font-bold text-lg mb-2">¡Usuario creado!</h3>
+        <p class="text-slate-400 text-sm mb-4">
+          Comparte esta contraseña temporal con el usuario. <strong class="text-amber-400">Solo se mostrará una vez.</strong>
+        </p>
+        <div class="bg-slate-800 border border-amber-500/30 rounded-xl px-4 py-3 mb-5 text-center">
+          <p class="text-amber-300 font-mono text-xl font-bold tracking-widest">{{ tempPasswordShown() }}</p>
+        </div>
+        <button (click)="confirmTempPassword()"
+          class="w-full px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all">
+          Entendido, la anoté
+        </button>
+      } @else {
+        <!-- Create / Edit form -->
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-white font-bold text-lg">
+            {{ editingUser() ? 'Editar usuario' : 'Crear usuario' }}
+          </h3>
+          <button (click)="closeUserModal()" class="text-slate-400 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        @if (userModalError()) {
+          <div class="mb-4 px-3 py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+            {{ userModalError() }}
+          </div>
+        }
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-slate-300 text-xs font-medium mb-1">Nombre completo</label>
+            <input type="text" [(ngModel)]="userForm.nombreCompleto"
+              class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+          </div>
+          <div>
+            <label class="block text-slate-300 text-xs font-medium mb-1">Correo electrónico</label>
+            <input type="email" [(ngModel)]="userForm.correo"
+              class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+          </div>
+          <div>
+            <label class="block text-slate-300 text-xs font-medium mb-1">Nombre de usuario</label>
+            <input type="text" [(ngModel)]="userForm.nombreUsuario"
+              class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+          </div>
+          <div>
+            <label class="block text-slate-300 text-xs font-medium mb-1">Contraseña</label>
+            <input type="password" [(ngModel)]="userForm.contrasena"
+              [placeholder]="editingUser() ? 'Dejar vacío para no cambiar' : 'Contraseña inicial'"
+              class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+          </div>
+          <div>
+            <label class="block text-slate-300 text-xs font-medium mb-1">Departamento</label>
+            <select [(ngModel)]="userForm.idDepartamento"
+              class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
+              <option value="">— Seleccionar departamento —</option>
+              @for (dep of departamentos(); track dep.id) {
+                <option [value]="dep.id">{{ dep.nombre }}</option>
+              }
+            </select>
+            @if (userForm.idDepartamento) {
+              <p class="text-sky-400 text-xs mt-1">
+                Rol heredado: <strong>{{ getRolHeredado(userForm.idDepartamento) }}</strong>
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button (click)="closeUserModal()"
+            class="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl transition-all text-sm">
+            Cancelar
+          </button>
+          <button (click)="saveUser()" [disabled]="userModalLoading()"
+            class="flex-1 px-4 py-2.5 bg-sky-500 hover:bg-sky-400 disabled:bg-sky-500/40
+              text-white font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+            @if (userModalLoading()) {
+              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            }
+            {{ editingUser() ? 'Guardar cambios' : 'Crear usuario' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════ MODAL ROL ══════════════════════════ -->
+@if (showRolModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-white font-bold text-lg">
+          {{ editingRol() ? 'Editar rol' : 'Crear rol' }}
+        </h3>
+        <button (click)="closeRolModal()" class="text-slate-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      @if (rolModalError()) {
+        <div class="mb-4 px-3 py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          {{ rolModalError() }}
+        </div>
+      }
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Nombre del rol</label>
+          <input type="text" [(ngModel)]="rolForm.nombreRol" placeholder="Ej: SUPERVISOR"
+            class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+              focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button (click)="closeRolModal()"
+          class="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl transition-all text-sm">
+          Cancelar
+        </button>
+        <button (click)="saveRol()" [disabled]="rolModalLoading()"
+          class="flex-1 px-4 py-2.5 bg-sky-500 hover:bg-sky-400 disabled:bg-sky-500/40
+            text-white font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+          @if (rolModalLoading()) {
+            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          }
+          {{ editingRol() ? 'Guardar cambios' : 'Crear rol' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════ MODAL DEPARTAMENTO ══════════════════════════ -->
+@if (showDepModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-white font-bold text-lg">
+          {{ editingDep() ? 'Editar departamento' : 'Crear departamento' }}
+        </h3>
+        <button (click)="closeDepModal()" class="text-slate-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      @if (depModalError()) {
+        <div class="mb-4 px-3 py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          {{ depModalError() }}
+        </div>
+      }
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Código</label>
+          <input type="text" [(ngModel)]="depForm.codigo" placeholder="RRHH"
+            class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+              focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 font-mono uppercase"/>
+        </div>
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="depForm.nombre" placeholder="Recursos Humanos"
+            class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+              focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500"/>
+        </div>
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Descripción</label>
+          <textarea [(ngModel)]="depForm.descripcion" rows="2" placeholder="Descripción opcional..."
+            class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+              focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Color</label>
+          <div class="flex items-center gap-3">
+            <input type="color" [(ngModel)]="depForm.color"
+              class="w-10 h-10 rounded-lg border border-slate-700 bg-slate-800 cursor-pointer p-1"/>
+            <span class="text-slate-400 text-sm font-mono">{{ depForm.color }}</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-300 text-xs font-medium mb-1">Rol que opera en este departamento</label>
+          <select [(ngModel)]="depForm.rolAsignado"
+            class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-sm
+              focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
+            <option value="">— Seleccionar rol —</option>
+            <option value="ADM_DISENADOR">ADM_DISENADOR — Administrador/Diseñador</option>
+            <option value="SUPERVISOR">SUPERVISOR — Supervisor de flujos</option>
+            <option value="OFFICER">OFFICER — Ejecutor de tareas</option>
+            <option value="CLIENT">CLIENT — Cliente final</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button (click)="closeDepModal()"
+          class="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl transition-all text-sm">
+          Cancelar
+        </button>
+        <button (click)="saveDep()" [disabled]="depModalLoading()"
+          class="flex-1 px-4 py-2.5 bg-sky-500 hover:bg-sky-400 disabled:bg-sky-500/40
+            text-white font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+          @if (depModalLoading()) {
+            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          }
+          {{ editingDep() ? 'Guardar cambios' : 'Crear departamento' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,166 @@
+/* src/app/landing/landing.component.css */
+
+/* ─── Fade-in Animations ─────────────────────────────────────────── */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+.delay-500 { transition-delay: 0.5s; }
+.delay-600 { transition-delay: 0.6s; }
+
+/* ─── Hero Background ────────────────────────────────────────────── */
+.hero-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 100% 50%, rgba(59, 130, 246, 0.07) 0%, transparent 60%),
+    #0A1628;
+}
+
+/* Subtle dot grid */
+.grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* ─── Float Animation (hero diagram) ────────────────────────────── */
+.float-anim {
+  animation: float 5s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* ─── SVG Flow Path Animation ────────────────────────────────────── */
+.flow-anim {
+  animation: flowDash 2s linear infinite;
+}
+@keyframes flowDash {
+  to { stroke-dashoffset: -22; }
+}
+
+/* ─── Node Pulse Glow ────────────────────────────────────────────── */
+.node-pulse {
+  animation: nodePulse 3s ease-in-out infinite;
+}
+@keyframes nodePulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.3)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.7)); }
+}
+
+/* ─── Feature Cards ──────────────────────────────────────────────── */
+.feature-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.08), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Step Number Entrance ───────────────────────────────────────── */
+.step-num {
+  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+  transform: scale(0.5);
+  opacity: 0;
+}
+.step-num.visible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* ─── Step Connector Dashed Animation ───────────────────────────── */
+.step-line-anim {
+  stroke-dasharray: 6 8;
+  animation: stepDash 1.5s linear infinite;
+}
+@keyframes stepDash {
+  to { stroke-dashoffset: -14; }
+}
+
+/* ─── Pricing Cards ──────────────────────────────────────────────── */
+.pricing-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.pricing-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.pricing-card.featured {
+  background: linear-gradient(135deg, rgba(14, 40, 80, 0.9) 0%, rgba(10, 22, 40, 0.9) 100%);
+  box-shadow:
+    0 0 40px rgba(56, 189, 248, 0.12),
+    0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.pricing-card.featured:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 0 60px rgba(56, 189, 248, 0.2),
+    0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Mockup Glow ────────────────────────────────────────────────── */
+.mockup-glow {
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.15),
+    0 0 50px rgba(56, 189, 248, 0.1),
+    0 0 100px rgba(56, 189, 248, 0.05),
+    0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Trust Logos ────────────────────────────────────────────────── */
+.trust-logo {
+  opacity: 0.35;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.trust-logo:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* ─── CTA Section ────────────────────────────────────────────────── */
+.cta-section {
+  background: linear-gradient(
+    135deg,
+    #071c38 0%,
+    #0d2748 30%,
+    #0a1e3a 60%,
+    #060f1e 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  width: 80%;
+  height: 200%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 100% 60% at 50% 100%, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}

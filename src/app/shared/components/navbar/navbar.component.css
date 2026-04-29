@@ -1,0 +1,16 @@
+/* src/app/shared/components/navbar/navbar.component.css */
+:host {
+  display: block;
+}
+
+nav {
+  background: transparent;
+}
+
+nav.scrolled {
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}

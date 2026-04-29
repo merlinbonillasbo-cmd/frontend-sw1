@@ -1,0 +1,356 @@
+<div class="p-4 space-y-4">
+  @if (!elemento) {
+    <div class="flex flex-col items-center justify-center py-10 text-slate-600 text-center">
+      <svg class="w-10 h-10 mb-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/>
+      </svg>
+      <p class="text-sm">Haz clic en un elemento del diagrama para ver sus propiedades</p>
+    </div>
+  } @else {
+    <div class="space-y-4">
+
+      <!-- Tipo -->
+      <div>
+        <span class="text-xs text-slate-500 uppercase tracking-wider">Tipo</span>
+        <p class="text-sm text-slate-300 font-medium mt-0.5">{{ tipo() }}</p>
+      </div>
+
+      <!-- Tip: gateway exclusivo -->
+      @if (tipo() === 'Compuerta exclusiva (XOR)') {
+        <div class="flex items-start gap-2 bg-amber-900/25 border border-amber-700/40 rounded-lg p-2.5 text-xs text-amber-300">
+          <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>
+            Para definir las rutas <strong>Verdadero / Falso</strong>, haz clic en cada
+            <strong>flecha de salida</strong> de esta compuerta y configura su condición en este panel.
+          </span>
+        </div>
+      }
+
+      <!-- Nombre/Label -->
+      <div>
+        <label class="text-xs text-slate-500 uppercase tracking-wider block mb-1.5">Nombre</label>
+        @if (editable) {
+          <input
+            [ngModel]="nombre()"
+            (ngModelChange)="nombre.set($event)"
+            (blur)="actualizarNombre()"
+            (keyup.enter)="actualizarNombre()"
+            type="text"
+            placeholder="Sin nombre"
+            class="w-full bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"/>
+          <p class="text-xs text-slate-600 mt-1">Presiona Enter o haz clic fuera para aplicar</p>
+        } @else {
+          <p class="text-sm text-slate-300">{{ nombre() || '—' }}</p>
+        }
+      </div>
+
+      <!-- ID del elemento -->
+      <div>
+        <span class="text-xs text-slate-500 uppercase tracking-wider">ID</span>
+        <p class="text-xs text-slate-600 font-mono mt-0.5 break-all">{{ elemento?.id ?? '—' }}</p>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           Sección: Flujo de secuencia (con condición XOR)
+           ═══════════════════════════════════════════════════ -->
+      @if (esSequenceFlow() && sourceEsGatewayExclusivo()) {
+
+        <hr class="border-slate-700"/>
+
+        <div class="space-y-3">
+          <span class="text-xs text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a1 1 0 01.707.293l7 7a1 1 0 010 1.414l-7 7A1 1 0 019 17V11H3a1 1 0 010-2h6V3a1 1 0 011-1z"/>
+            </svg>
+            Condición de salida
+          </span>
+
+          <!-- Flujo predeterminado -->
+          <label class="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              [checked]="esDefaultFlow()"
+              (change)="toggleDefaultFlow($event)"
+              [disabled]="!editable"
+              class="w-4 h-4 accent-amber-400 disabled:opacity-50"/>
+            <span class="text-sm text-slate-300 group-hover:text-slate-100 transition-colors">
+              Flujo <strong class="text-amber-400">predeterminado</strong>
+              <span class="text-slate-500 text-xs ml-1">(se toma cuando ninguna condición se cumple)</span>
+            </span>
+          </label>
+
+          <!-- Condición personalizada -->
+          @if (!esDefaultFlow()) {
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider block mb-1.5">
+                Expresión de condición
+              </label>
+
+              <!-- Atajos rápidos -->
+              <div class="flex gap-1.5 mb-2">
+                <button (click)="aplicarAtajo('${true}')"
+                  class="px-2.5 py-1 rounded text-xs font-medium
+                         bg-emerald-900/50 border border-emerald-700 text-emerald-300
+                         hover:bg-emerald-800/70 transition-colors">
+                  ✔ Verdadero
+                </button>
+                <button (click)="aplicarAtajo('${false}')"
+                  class="px-2.5 py-1 rounded text-xs font-medium
+                         bg-rose-900/50 border border-rose-700 text-rose-300
+                         hover:bg-rose-800/70 transition-colors">
+                  ✘ Falso
+                </button>
+              </div>
+
+              @if (editable) {
+                <input
+                  [ngModel]="condicion()"
+                  (ngModelChange)="condicion.set($event)"
+                  (blur)="actualizarCondicion()"
+                  (keyup.enter)="actualizarCondicion()"
+                  type="text"
+                  placeholder="Ej: \${aprobado == true}"
+                  class="w-full bg-slate-800 border border-slate-600 text-slate-100
+                         placeholder-slate-500 rounded-lg px-3 py-2 text-sm font-mono
+                         focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"/>
+                <p class="text-xs text-slate-600 mt-1">
+                  Usa <code class="text-amber-400">${{'${'}}</code> para expresiones. Presiona Enter o haz clic fuera para aplicar.
+                </p>
+              } @else {
+                <p class="text-sm text-slate-300 font-mono">{{ condicion() || '—' }}</p>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════════════════════════════════════════
+           Sección exclusiva para UserTask
+           ═══════════════════════════════════════════════════ -->
+      @if (esUserTask()) {
+
+        <hr class="border-slate-700"/>
+
+        <!-- Departamento responsable -->
+        <div>
+          <label class="text-xs text-slate-500 uppercase tracking-wider block mb-1.5">
+            Departamento responsable
+          </label>
+          @if (editable) {
+            <select
+              [ngModel]="deptSeleccionado()"
+              (ngModelChange)="deptSeleccionado.set($event); onDeptChange()"
+              class="w-full bg-slate-800 border border-slate-600 text-slate-100 rounded-lg px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+              <option value="">— Sin asignar —</option>
+              @for (dep of departamentos(); track dep.id) {
+                <option [value]="dep.codigo">{{ dep.nombre }}</option>
+              }
+            </select>
+          } @else {
+            <p class="text-sm text-slate-300">{{ deptSeleccionado() || '—' }}</p>
+          }
+        </div>
+
+        <!-- Departamento destino (documentos) -->
+        <div>
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-slate-500 uppercase tracking-wider block mb-1.5">
+              Departamento destino (documentos)
+            </label>
+            @if (editable) {
+              <button
+                type="button"
+                (click)="agregarDeptDestino()"
+                class="text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:text-white">
+                +
+              </button>
+            }
+          </div>
+
+          @if (editable) {
+            @if (deptDestinos().length === 0) {
+              <p class="text-xs text-slate-600">Opcional. Usa + para agregar un destino.</p>
+            }
+            <div class="space-y-2">
+              @for (dest of deptDestinos(); track $index; let i = $index) {
+                <div class="flex items-center gap-2">
+                  <select
+                    [ngModel]="dest"
+                    (ngModelChange)="onDeptDestinoChange(i, $event)"
+                    class="w-full bg-slate-800 border border-slate-600 text-slate-100 rounded-lg px-3 py-2 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent">
+                    <option value="">— Sin asignar —</option>
+                    @for (dep of departamentos(); track dep.id) {
+                      <option [value]="dep.codigo">{{ dep.nombre }}</option>
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    (click)="eliminarDeptDestino(i)"
+                    class="text-xs px-2 py-1 rounded bg-slate-800 border border-slate-700 text-slate-400 hover:text-red-400">
+                    x
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-sm text-slate-300">
+              {{ deptDestinos().length > 0 ? deptDestinos().join(', ') : '—' }}
+            </p>
+          }
+        </div>
+
+        @if (mostrarCrearUsuario()) {
+          <div class="bg-slate-800/40 border border-slate-700 rounded-lg p-3">
+            <label class="flex items-center gap-2 text-sm text-slate-300">
+              <input
+                type="checkbox"
+                [ngModel]="crearUsuarioCliente()"
+                (ngModelChange)="crearUsuarioCliente.set($event); onCrearUsuarioChange()"
+                [disabled]="!editable"
+                class="accent-sky-500 w-4 h-4"/>
+              Crear usuario cliente en esta tarea
+            </label>
+            <p class="text-xs text-slate-500 mt-1">
+              Disponible solo para tareas del departamento con rol ADM_DISENADOR.
+            </p>
+          </div>
+        }
+
+        <div class="bg-slate-800/40 border border-slate-700 rounded-lg p-3">
+          <label class="flex items-center gap-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              [ngModel]="inicioFlujo()"
+              (ngModelChange)="inicioFlujo.set($event); onInicioFlujoChange()"
+              [disabled]="!editable || !deptSeleccionado()"
+              class="accent-sky-500 w-4 h-4"/>
+            Permitir iniciar flujo desde este departamento
+          </label>
+          <p class="text-xs text-slate-500 mt-1">
+            Solo los usuarios de este departamento veran este flujo para iniciarlo.
+          </p>
+        </div>
+
+        <!-- ── Formulario dinámico ────────────────────────── -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-500 uppercase tracking-wider">Formulario dinámico</span>
+            <span class="text-xs text-slate-600">{{ campos().length }} campo(s)</span>
+          </div>
+
+          <p class="text-xs text-slate-600 mb-3">
+            Campos que verá el funcionario al recibir esta tarea:
+          </p>
+
+          <!-- Lista de campos -->
+          <div class="space-y-2">
+            @for (campo of campos(); track campo.id; let i = $index) {
+              <div class="space-y-2 bg-slate-800/60 border border-slate-700 rounded-lg p-2">
+                <div class="flex items-center gap-2">
+
+                  <!-- Icono tipo -->
+                  <span class="text-base shrink-0 w-6 text-center" title="{{ campo.tipo }}">
+                    {{ iconTipo(campo.tipo) }}
+                  </span>
+
+                  <!-- Etiqueta del campo -->
+                  <input
+                    [(ngModel)]="campo.label"
+                    (blur)="onCampoBlur()"
+                    (keyup.enter)="onCampoBlur()"
+                    [disabled]="!editable"
+                    type="text"
+                    placeholder="Etiqueta del campo"
+                    class="flex-1 min-w-0 bg-transparent border border-slate-600 text-slate-100
+                           placeholder-slate-600 rounded-md px-2 py-1 text-xs
+                           focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-transparent
+                           disabled:opacity-50"/>
+
+                  <!-- Tipo de campo -->
+                  <select
+                    [(ngModel)]="campo.tipo"
+                    (ngModelChange)="onTipoCampoChange()"
+                    [disabled]="!editable"
+                    class="bg-slate-700 border border-slate-600 text-slate-200 rounded-md px-1.5 py-1
+                           text-xs focus:outline-none focus:ring-1 focus:ring-sky-500
+                           disabled:opacity-50 shrink-0">
+                    @for (t of tiposCampo; track t.value) {
+                      <option [value]="t.value">{{ t.label }}</option>
+                    }
+                  </select>
+
+                  <!-- Requerido toggle -->
+                  <label class="flex items-center gap-1 shrink-0 cursor-pointer" title="Requerido">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="campo.requerido"
+                      (ngModelChange)="onRequeridoChange()"
+                      [disabled]="!editable"
+                      class="accent-sky-500 w-3.5 h-3.5"/>
+                    <span class="text-xs text-slate-500">Req.</span>
+                  </label>
+
+                  <!-- Eliminar -->
+                  @if (editable) {
+                    <button
+                      (click)="eliminarCampo(i)"
+                      class="shrink-0 text-slate-600 hover:text-red-400 transition-colors p-0.5 rounded"
+                      title="Eliminar campo">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    </button>
+                  }
+                </div>
+
+                <input
+                  [(ngModel)]="campo.ayuda"
+                  (blur)="onCampoBlur()"
+                  (keyup.enter)="onCampoBlur()"
+                  [disabled]="!editable"
+                  type="text"
+                  placeholder="Texto de ayuda (ej: Foto del carnet)"
+                  class="w-full bg-slate-900/50 border border-slate-700 text-slate-200
+                         placeholder-slate-600 rounded-md px-2 py-1 text-xs
+                         focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-transparent
+                         disabled:opacity-50"/>
+              </div>
+            }
+          </div>
+
+          <!-- Sin campos -->
+          @if (campos().length === 0) {
+            <p class="text-xs text-slate-700 text-center py-3 border border-dashed border-slate-700 rounded-lg mt-2">
+              No hay campos configurados
+            </p>
+          }
+
+          <!-- Botón agregar campo -->
+          @if (editable) {
+            <button
+              (click)="agregarCampo()"
+              class="mt-3 w-full flex items-center justify-center gap-1.5
+                     border border-dashed border-slate-600 hover:border-sky-500
+                     text-slate-500 hover:text-sky-400
+                     rounded-lg py-2 text-xs font-medium transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              Agregar campo
+            </button>
+          }
+        </div>
+        <!-- ── fin formulario dinámico ─────────────────────── -->
+
+      } <!-- fin @if esUserTask -->
+
+    </div>
+  }
+</div>

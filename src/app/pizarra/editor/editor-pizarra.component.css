@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* El canvas de bpmn-js necesita posicionamiento explícito */
+:host ::ng-deep .bjs-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+:host ::ng-deep .djs-container {
+  background: #0f172a; /* slate-950 */
+}
+
+/* Ocultar el logo de bpmn.io */
+:host ::ng-deep .bjs-powered-by {
+  display: none !important;
+}

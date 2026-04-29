@@ -1,0 +1,171 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+/* ============================================
+   BPMN-JS — Fix completo de estilos
+   ============================================ */
+
+/* --- Fondo punteado tipo pizarra --- */
+.djs-container {
+  background-color: #ffffff !important;
+  background-image: radial-gradient(circle, #c0c0c0 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* Eliminar la apariencia de "hoja" con sombra y borde */
+.djs-canvas {
+  background: transparent !important;
+}
+
+/* Quitar el rectángulo blanco flotante del canvas raíz */
+.djs-container svg {
+  background: transparent !important;
+}
+
+/* --- Paleta lateral --- */
+.djs-palette {
+  background: #2a2a3a !important;
+  border: 1px solid #3a3a4a !important;
+  border-radius: 8px !important;
+  width: 52px !important;
+  overflow: visible !important;
+}
+
+.djs-palette .entry {
+  color: #ffffff !important;
+  background: #2e2e3e !important;
+  border: 0.5px solid #3a3a4a !important;
+  border-radius: 8px !important;
+  margin: 3px !important;
+  width: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+}
+
+.djs-palette .entry:hover {
+  background: #3a3a4e !important;
+  color: #ffffff !important;
+}
+
+.djs-palette .entry svg,
+.djs-palette .entry path,
+.djs-palette .entry circle,
+.djs-palette .entry rect,
+.djs-palette .entry polygon {
+  stroke: #ffffff !important;
+  stroke-width: 1.5px !important;
+  fill: none !important;
+}
+
+/* Fuente de iconos bpmn */
+[class^="bpmn-icon-"],
+[class*=" bpmn-icon-"] {
+  color: #ffffff !important;
+  font-size: 15px !important;
+}
+
+/* --- Paleta: scroll interno para pantallas pequeñas --- */
+.djs-palette .djs-palette-entries {
+  overflow-y: auto !important;
+  max-height: calc(100vh - 120px) !important;
+}
+
+.djs-palette .djs-palette-entries::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.djs-palette .djs-palette-entries::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.djs-palette .djs-palette-entries::-webkit-scrollbar-thumb {
+  background: #555 !important;
+  border-radius: 2px !important;
+}
+
+.djs-palette .djs-palette-entries::-webkit-scrollbar-thumb:hover {
+  background: #888 !important;
+}
+
+/* --- Iconos del CONTEXT PAD (popup al hacer clic en un nodo) --- */
+.djs-context-pad {
+  background: transparent !important;
+}
+
+.djs-context-pad .entry {
+  background-color: #ffffff !important;
+  border: 1px solid #cccccc !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+  color: #1a1a1a !important;
+}
+
+.djs-context-pad .entry:hover {
+  background-color: #f0f0f0 !important;
+  border-color: #999 !important;
+}
+
+.djs-context-pad .entry [class^="bpmn-icon-"],
+.djs-context-pad .entry [class*=" bpmn-icon-"] {
+  color: #1a1a1a !important;
+}
+
+.djs-context-pad .entry svg path,
+.djs-context-pad .entry svg circle,
+.djs-context-pad .entry svg rect {
+  stroke: #1a1a1a !important;
+}
+
+/* --- Popup "Change element" --- */
+.djs-popup {
+  color: #000000 !important;
+}
+
+.djs-popup .entry {
+  color: #000000 !important;
+  background: #ffffff !important;
+  border: 1px solid #cccccc !important;
+}
+
+.djs-popup .entry:hover {
+  background: #f0f0f0 !important;
+  border-color: #999999 !important;
+}
+
+.djs-popup .entry [class^="bpmn-icon-"],
+.djs-popup .entry [class*=" bpmn-icon-"] {
+  color: #000000 !important;
+}
+
+.djs-popup .entry svg path,
+.djs-popup .entry svg circle,
+.djs-popup .entry svg rect,
+.djs-popup .entry svg polygon {
+  stroke: #000000 !important;
+  fill: none !important;
+}
+
+/* --- Nodos del diagrama --- */
+.djs-element .djs-visual path,
+.djs-element .djs-visual circle,
+.djs-element .djs-visual rect,
+.djs-element .djs-visual polygon {
+  stroke: #333333 !important;
+}
+
+/* Texto de los nodos */
+.djs-label {
+  color: #1a1a1a !important;
+  fill: #1a1a1a !important;
+}
+
+/* --- Separador de la paleta --- */
+.djs-palette-separator {
+  border-color: #444 !important;
+}
+
+/* --- Scroll del canvas sin fondo gris --- */
+.djs-container > svg {
+  background: transparent !important;
+}

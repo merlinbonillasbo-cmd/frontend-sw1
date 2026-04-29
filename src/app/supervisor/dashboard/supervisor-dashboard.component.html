@@ -1,0 +1,45 @@
+<!-- src/app/supervisor/dashboard/supervisor-dashboard.component.html -->
+<div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
+
+  <!-- Card central -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 flex flex-col items-center gap-6 shadow-2xl w-full max-w-md mx-4">
+
+    <!-- Icono sector -->
+    <div class="w-16 h-16 rounded-2xl bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
+      <svg class="w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+      </svg>
+    </div>
+
+    <!-- Título -->
+    <div class="text-center">
+      <h1 class="text-white text-3xl font-bold tracking-tight">Sector Gerente</h1>
+      <p class="text-slate-400 text-sm mt-2">
+        Bienvenido, <span class="text-violet-400 font-medium">{{ auth.currentUser$()?.nombreCompleto }}</span>
+      </p>
+    </div>
+
+    <!-- Badge rol -->
+    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">
+      {{ auth.currentUser$()?.rol }}
+    </span>
+
+    <!-- Placeholder contenido -->
+    <div class="w-full bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
+      <p class="text-slate-500 text-sm">Contenido del sector en construcción...</p>
+    </div>
+
+    <!-- Logout -->
+    <button (click)="logout()"
+      class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
+        text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-slate-700
+        hover:border-red-500/30 transition-all duration-200">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+      </svg>
+      Cerrar sesión
+    </button>
+  </div>
+</div>

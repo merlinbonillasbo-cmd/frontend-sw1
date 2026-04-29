@@ -1,0 +1,570 @@
+<!-- src/app/officer/dashboard/officer-dashboard.component.html -->
+<div class="min-h-screen bg-slate-950 flex">
+
+  <!-- ══════════════════════════ SIDEBAR IZQUIERDO ══════════════════════════ -->
+  <aside class="w-72 bg-[#1a1a2e] border-r border-slate-700 flex flex-col shrink-0">
+
+    <!-- Header del sidebar -->
+    <div class="p-6 border-b border-slate-700">
+      <p class="text-slate-500 text-[10px] font-semibold uppercase tracking-widest leading-none mb-1">Departamento</p>
+      <h1 class="text-white text-2xl font-bold leading-tight">{{ deptNombre() }}</h1>
+    </div>
+
+    <!-- Separador -->
+    <div class="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-3"></div>
+
+    <!-- Navegación -->
+    <nav class="flex-1 px-4 py-2 space-y-2">
+      <button
+        (click)="navegarA('tareas')"
+        [class.bg-sky-600]="vistaActiva() === 'tareas'"
+        [class.text-white]="vistaActiva() === 'tareas'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'tareas'"
+        [class.text-slate-400]="vistaActiva() !== 'tareas'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+        </svg>
+        Tareas
+        @if (tareasPendientes().length > 0) {
+          <span class="ml-auto bg-sky-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            {{ tareasPendientes().length }}
+          </span>
+        }
+      </button>
+
+      <button
+        (click)="navegarA('enviar')"
+        [class.bg-sky-600]="vistaActiva() === 'enviar'"
+        [class.text-white]="vistaActiva() === 'enviar'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'enviar'"
+        [class.text-slate-400]="vistaActiva() !== 'enviar'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+        </svg>
+        Enviar datos
+      </button>
+
+      <button
+        (click)="navegarA('flujos')"
+        [class.bg-sky-600]="vistaActiva() === 'flujos'"
+        [class.text-white]="vistaActiva() === 'flujos'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'flujos'"
+        [class.text-slate-400]="vistaActiva() !== 'flujos'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+        </svg>
+        Flujos de trabajo
+        @if (politicasActivas().length > 0) {
+          <span class="ml-auto bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            {{ politicasActivas().length }}
+          </span>
+        }
+      </button>
+
+      <button
+        (click)="navegarA('quejas')"
+        [class.bg-sky-600]="vistaActiva() === 'quejas'"
+        [class.text-white]="vistaActiva() === 'quejas'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'quejas'"
+        [class.text-slate-400]="vistaActiva() !== 'quejas'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        Quejas
+      </button>
+    </nav>
+
+    <!-- Footer del sidebar -->
+    <div class="p-4 border-t border-slate-700">
+      <button (click)="logout()"
+        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
+          text-slate-400 hover:text-red-400 bg-slate-800/40 hover:bg-red-500/10
+          border border-slate-700 hover:border-red-500/30 transition-all duration-200">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════ ÁREA PRINCIPAL (DERECHA) ══════════════════════════ -->
+  <div class="flex-1 flex flex-col bg-slate-950">
+
+    <!-- Header: Saludo + Notificaciones -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+      <div>
+        <p class="text-slate-300 text-sm">
+          Hola de nuevo <span class="font-semibold text-white">{{ auth.currentUser$()?.nombreCompleto }}</span>,
+          espero que hoy <span class="font-medium text-sky-400">{{ fechaHoy }}</span> sea una buena jornada laboral
+        </p>
+      </div>
+
+      <!-- Campana de notificaciones -->
+      <div class="relative">
+        <button (click)="toggleDropdownNotificaciones()"
+          class="relative p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+          </svg>
+          @if (badgeNotificaciones() > 0) {
+            <span
+              class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold
+                rounded-full flex items-center justify-center border border-slate-900">
+              {{ badgeNotificaciones() }}
+            </span>
+          }
+        </button>
+
+        <!-- Dropdown notificaciones -->
+        @if (dropdownNotificacionesAbierto()) {
+          <div class="absolute top-full right-0 mt-2 w-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50">
+            <div class="p-3 border-b border-slate-700 flex items-center justify-between">
+              <span class="text-white text-sm font-semibold">Notificaciones</span>
+              @if (badgeNotificaciones() > 0) {
+                <button (click)="limpiarNotificaciones()"
+                  class="text-xs text-sky-400 hover:text-sky-300 font-medium">
+                  Limpiar
+                </button>
+              }
+            </div>
+            <div class="max-h-72 overflow-y-auto">
+              @if (badgeNotificaciones() === 0) {
+                <p class="px-4 py-6 text-slate-500 text-sm text-center">Sin notificaciones nuevas</p>
+              } @else {
+                @for (notif of notificaciones(); track notif.timestamp) {
+                  <div class="px-4 py-3 hover:bg-slate-800/50 border-b border-slate-800 last:border-0">
+                    <p class="text-slate-300 text-sm">{{ notif.mensaje || notif.tipo }}</p>
+                    <p class="text-slate-500 text-xs mt-1">{{ notif.timestamp | slice:11:19 }}</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </header>
+
+    <!-- Contenido según vista activa -->
+    <main class="flex-1 p-6 overflow-y-auto">
+
+      <!-- ═════════════════ VISTA: FLUJOS DE TRABAJO ═════════════════ -->
+      @if (vistaActiva() === 'flujos') {
+        <div class="max-w-3xl">
+          <h2 class="text-white font-semibold text-2xl mb-2">Flujos de trabajo</h2>
+          <p class="text-slate-400 text-sm mb-6">Selecciona un proceso para iniciar un nuevo trámite.</p>
+
+          @if (politicasActivas().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+              <svg class="w-10 h-10 text-slate-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+              </svg>
+              <p class="text-slate-500 text-sm">No hay flujos de trabajo activos disponibles.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (politica of politicasActivas(); track politica.id) {
+                <div class="bg-slate-900 border border-slate-800 hover:border-sky-500/40 rounded-2xl p-6 transition-all group">
+                  <div class="flex items-start gap-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+                      <svg class="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+                      </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-white font-semibold text-base">{{ politica.titulo }}</h3>
+                      @if (politica.descripcion) {
+                        <p class="text-slate-400 text-xs mt-1 line-clamp-2">{{ politica.descripcion }}</p>
+                      }
+                    </div>
+                    <span class="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded-full uppercase shrink-0">
+                      ACTIVO
+                    </span>
+                  </div>
+                  <button (click)="iniciarFlujo(politica.id)"
+                    [disabled]="iniciandoFlujo() || !puedeIniciar(politica)"
+                    class="w-full px-4 py-2.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-50
+                      text-white text-sm font-semibold rounded-xl transition-colors
+                      flex items-center justify-center gap-2">
+                    @if (iniciandoFlujo()) {
+                      <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    } @else {
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z"/>
+                      </svg>
+                    }
+                    {{ puedeIniciar(politica) ? 'Iniciar trámite' : 'No autorizado para iniciar' }}
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═════════════════ VISTA: TAREAS ═════════════════ -->
+      @if (vistaActiva() === 'tareas') {
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- Columna izquierda: Tareas (ROJO + AMARILLO) -->
+          <div class="lg:col-span-2 space-y-6">
+
+            <!-- Tareas pendientes (ROJO) -->
+            <div>
+              <h2 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                Tareas disponibles
+              </h2>
+              @if (cargandoTareas()) {
+                <p class="text-slate-500 text-sm">Cargando tareas...</p>
+              } @else if (tareasPendientes().length === 0) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center">
+                  <p class="text-slate-500 text-sm">No hay tareas disponibles</p>
+                </div>
+              } @else {
+                <div class="space-y-3">
+                  @for (tarea of tareasPendientes(); track tarea.id) {
+                    <div class="bg-slate-900 border-2 border-red-500/30 rounded-2xl p-5 hover:border-red-500/50 transition-all shadow-md">
+                      <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="flex-1">
+                          <h3 class="text-white font-medium text-sm">
+                            {{ tarea.datos?.['nombreFlujo'] || tarea.idInstancia }}
+                          </h3>
+                          <p class="text-slate-400 text-xs mt-1">Nodo: {{ tarea.idNodo }}</p>
+                          @if (tarea.datos?.['codigoCaso']) {
+                            <p class="text-slate-500 text-xs mt-1">{{ tarea.datos?.['codigoCaso'] }}</p>
+                          }
+                        </div>
+                        <span class="px-2.5 py-0.5 bg-red-500/20 text-red-400 border border-red-500/40 text-xs font-semibold rounded-full">
+                          NUEVA
+                        </span>
+                      </div>
+                      <button (click)="tomarTarea(tarea.id)"
+                        class="w-full mt-2 px-4 py-2 bg-red-600/80 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-colors">
+                        Tomar y llenar formulario
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Tareas en atención (AMARILLO) -->
+            @if (tareasEnAtencion().length > 0) {
+              <div>
+                <h2 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+                  En atención
+                </h2>
+                <div class="space-y-3">
+                  @for (tarea of tareasEnAtencion(); track tarea.id) {
+                    <div class="bg-slate-900 border-2 border-yellow-500/30 rounded-2xl p-5 hover:border-yellow-500/50 transition-all shadow-md">
+                      <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="flex-1">
+                          <h3 class="text-white font-medium text-sm">
+                            {{ tarea.datos?.['nombreFlujo'] || tarea.idInstancia }}
+                          </h3>
+                          <p class="text-slate-400 text-xs mt-1">Nodo: {{ tarea.idNodo }}</p>
+                          @if (tarea.datos?.['codigoCaso']) {
+                            <p class="text-slate-500 text-xs mt-1">{{ tarea.datos?.['codigoCaso'] }}</p>
+                          }
+                        </div>
+                        <span class="px-2.5 py-0.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-xs font-semibold rounded-full">
+                          EN PROCESO
+                        </span>
+                      </div>
+                      <button (click)="continuarTarea(tarea.id)"
+                        class="w-full mt-2 px-4 py-2 bg-yellow-600/80 hover:bg-yellow-500 text-white text-sm font-medium rounded-lg transition-colors">
+                        Continuar — llenar formulario
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Columna derecha: Usuarios activos -->
+          <div>
+            <h2 class="text-white font-semibold text-lg mb-4">Usuarios activos</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+              @if (usuariosActivos().length === 0) {
+                <p class="text-slate-500 text-sm text-center py-4">Sin usuarios conectados</p>
+              } @else {
+                <div class="space-y-2">
+                  @for (usuario of usuariosActivos(); track usuario.idUsuario) {
+                    <div class="flex items-center gap-3 p-2.5 bg-slate-800/50 rounded-lg">
+                      <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 text-xs font-bold uppercase shrink-0">
+                        {{ usuario.nombreUsuario.charAt(0) }}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-white text-sm font-medium truncate">{{ usuario.nombreUsuario }}</p>
+                        <span
+                          [class]="usuario.estado === 'ocupado' ? 'text-yellow-400' : 'text-green-400'"
+                          class="text-xs font-medium">
+                          {{ usuario.estado === 'ocupado' ? 'Ocupado' : 'Disponible' }}
+                        </span>
+                      </div>
+                      <div
+                        [class]="usuario.estado === 'ocupado' ? 'bg-yellow-500' : 'bg-green-500'"
+                        class="w-2 h-2 rounded-full shrink-0">
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- ═════════════════ VISTA: ENVIAR DATOS ═════════════════ -->
+      @if (vistaActiva() === 'enviar') {
+        <div class="max-w-2xl mx-auto">
+          <div class="flex items-center gap-3 mb-6">
+            <button (click)="navegarA('tareas')"
+              class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+              </svg>
+            </button>
+            <div>
+              <h2 class="text-white font-semibold text-xl">Formulario de tarea</h2>
+              @if (nodoActualLabel()) {
+                <p class="text-slate-400 text-sm">{{ nodoActualLabel() }}</p>
+              }
+            </div>
+          </div>
+
+          @if (camposFormulario().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
+              <p class="text-slate-500 text-sm">No hay tarea activa. Selecciona una tarea de la lista para continuar.</p>
+              <button (click)="navegarA('tareas')"
+                class="mt-4 px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium rounded-lg transition-colors">
+                Ir a tareas
+              </button>
+            </div>
+          } @else {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              @if (departamentosDestino().length > 0) {
+                <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4 mb-5">
+                  <p class="text-xs text-slate-500 uppercase tracking-wider">Departamento destino (documentos)</p>
+                  <p class="text-sm text-slate-200 mt-1">{{ departamentosDestino().join(', ') }}</p>
+                </div>
+              }
+              <div class="space-y-5">
+                @for (campo of camposFormulario(); track campo.nombre) {
+                  <div>
+                    <label class="block text-slate-300 text-sm font-medium mb-2">
+                      {{ campo.nombre }}
+                      @if (campo.requerido) {
+                        <span class="text-red-400 ml-0.5">*</span>
+                      }
+                    </label>
+                    @if (campo.ayuda) {
+                      <p class="text-xs text-slate-500 mb-2">{{ campo.ayuda }}</p>
+                    }
+
+                    <!-- TEXTO -->
+                    @if (campo.tipo === 'texto') {
+                      <input type="text"
+                        [(ngModel)]="datosFormulario()[campo.nombre]"
+                        class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                          placeholder-slate-500 focus:border-sky-500 focus:outline-none transition-colors"
+                        [placeholder]="campo.nombre"
+                        [required]="campo.requerido" />
+                    }
+
+                    <!-- IMAGEN -->
+                    @if (campo.tipo === 'imagen') {
+                      <label class="flex items-center gap-3 px-4 py-3 bg-slate-800 border border-slate-700
+                        hover:border-sky-500/50 rounded-lg cursor-pointer transition-colors group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                        </svg>
+                        <div class="flex-1 min-w-0">
+                          @if (datosFormulario()[campo.nombre]) {
+                            <span class="text-sky-400 text-sm font-medium truncate block">{{ datosFormulario()[campo.nombre] }}</span>
+                          } @else {
+                            <span class="text-slate-400 text-sm">Seleccionar imagen (JPG, PNG)</span>
+                          }
+                        </div>
+                        <span class="text-slate-500 text-xs shrink-0">Imagen</span>
+                        <input type="file" accept="image/*" class="hidden"
+                          (change)="onArchivoSeleccionado($event, campo.nombre)" />
+                      </label>
+                    }
+
+                    <!-- PDF / ARCHIVO -->
+                    @if (campo.tipo === 'pdf') {
+                      <label class="flex items-center gap-3 px-4 py-3 bg-slate-800 border border-slate-700
+                        hover:border-sky-500/50 rounded-lg cursor-pointer transition-colors group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                        </svg>
+                        <div class="flex-1 min-w-0">
+                          @if (datosFormulario()[campo.nombre]) {
+                            <span class="text-sky-400 text-sm font-medium truncate block">{{ datosFormulario()[campo.nombre] }}</span>
+                          } @else {
+                            <span class="text-slate-400 text-sm">Seleccionar documento (PDF)</span>
+                          }
+                        </div>
+                        <span class="text-slate-500 text-xs shrink-0">PDF</span>
+                        <input type="file" accept=".pdf,application/pdf" class="hidden"
+                          (change)="onArchivoSeleccionado($event, campo.nombre)" />
+                      </label>
+                    }
+
+                    <!-- FECHA -->
+                    @if (campo.tipo === 'fecha') {
+                      <input type="date"
+                        [(ngModel)]="datosFormulario()[campo.nombre]"
+                        class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                          focus:border-sky-500 focus:outline-none transition-colors
+                          [color-scheme:dark]"
+                        [required]="campo.requerido" />
+                    }
+
+                    <!-- SÍ/NO -->
+                    @if (campo.tipo === 'sino') {
+                      <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox"
+                            [(ngModel)]="datosFormulario()[campo.nombre]"
+                            class="sr-only peer">
+                          <div
+                            class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sky-500
+                              rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white
+                              after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5
+                              after:transition-all peer-checked:bg-sky-600">
+                          </div>
+                        </label>
+                        <span class="text-slate-400 text-sm">
+                          {{ datosFormulario()[campo.nombre] ? 'Sí' : 'No' }}
+                        </span>
+                      </div>
+                    }
+
+                    <!-- READONLY -->
+                    @if (campo.tipo === 'readonly') {
+                      <p class="text-slate-500 text-sm px-4 py-2.5 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                        {{ campo.valor || '—' }}
+                      </p>
+                    }
+                  </div>
+                }
+              </div>
+
+              <button (click)="completarTarea()"
+                [disabled]="guardandoFormulario()"
+                class="w-full mt-6 px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white
+                  text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                @if (guardandoFormulario()) {
+                  <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                }
+                {{ guardandoFormulario() ? 'Procesando...' : 'Completar y avanzar al siguiente departamento' }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═════════════════ VISTA: QUEJAS ═════════════════ -->
+      @if (vistaActiva() === 'quejas') {
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-white font-semibold text-2xl mb-6">Registrar queja</h2>
+
+          <!-- Formulario de queja -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
+            <div class="space-y-5">
+              <div>
+                <label class="block text-slate-300 text-sm font-medium mb-2">Tipo de queja</label>
+                <select [(ngModel)]="tipoQueja"
+                  class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                    focus:border-sky-500 focus:outline-none transition-colors">
+                  <option value="TECNICA">Técnica</option>
+                  <option value="ADMINISTRATIVA">Administrativa</option>
+                  <option value="CLIENTE">Cliente</option>
+                  <option value="OTRA">Otra</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-slate-300 text-sm font-medium mb-2">Descripción</label>
+                <textarea [(ngModel)]="descripcionQueja"
+                  rows="4"
+                  class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white
+                    placeholder-slate-500 focus:border-sky-500 focus:outline-none transition-colors resize-none"
+                  placeholder="Describe tu queja o problema...">
+                </textarea>
+              </div>
+
+              <button (click)="enviarQueja()"
+                [disabled]="enviandoQueja() || !descripcionQueja().trim()"
+                class="w-full px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white
+                  text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                @if (enviandoQueja()) {
+                  <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                }
+                {{ enviandoQueja() ? 'Enviando...' : 'Enviar queja' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Historial de quejas -->
+          <h3 class="text-white font-semibold text-lg mb-4">Mis quejas enviadas</h3>
+          @if (quejasUsuario().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
+              <p class="text-slate-500 text-sm">No has enviado quejas aún</p>
+            </div>
+          } @else {
+            <div class="space-y-3">
+              @for (queja of quejasUsuario(); track queja.id) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                  <div class="flex items-start justify-between gap-3 mb-2">
+                    <span class="px-2.5 py-0.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 text-xs font-semibold rounded-full">
+                      {{ queja.tipo }}
+                    </span>
+                    <span class="text-slate-500 text-xs">{{ queja.fechaCreacion | slice:0:10 }}</span>
+                  </div>
+                  <p class="text-slate-300 text-sm">{{ queja.descripcion }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+    </main>
+  </div>
+
+</div>
+
+<!-- Toast de notificación -->
+@if (toastNotificacion()) {
+  <div class="fixed bottom-6 right-6 bg-slate-900 border border-sky-500/40 rounded-xl px-5 py-3 shadow-2xl z-50
+    flex items-center gap-3">
+    <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-white text-sm font-medium">{{ toastNotificacion() }}</p>
+  </div>
+}

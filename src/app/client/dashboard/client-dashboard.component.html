@@ -1,0 +1,61 @@
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-semibold">Mis solicitudes</h1>
+      <p class="text-xs text-slate-400">{{ auth.currentUser$()?.nombreCompleto }}</p>
+    </div>
+    <button (click)="cargar()"
+      class="px-3 py-2 rounded-lg text-xs font-medium text-slate-300 border border-slate-700 hover:text-white hover:border-slate-500">
+      Actualizar
+    </button>
+  </header>
+
+  <main class="p-6">
+    @if (error()) {
+      <div class="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
+        {{ error() }}
+      </div>
+    }
+
+    @if (cargando()) {
+      <div class="flex items-center gap-3 text-slate-400 text-sm py-12 justify-center">
+        <div class="w-5 h-5 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+        Cargando solicitudes...
+      </div>
+    } @else {
+      @if (instancias().length === 0) {
+        <div class="text-center py-16 text-slate-500">
+          No hay solicitudes aún.
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (inst of instancias(); track inst.id) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="text-xs text-slate-500">Solicitud</p>
+                  <p class="text-sm text-slate-200 font-medium break-all">{{ inst.id }}</p>
+                </div>
+                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border"
+                  [class]="estadoClase(inst.estado)">
+                  {{ estadoLabel(inst.estado) }}
+                </span>
+              </div>
+
+              <div class="text-xs text-slate-400">
+                <p>Departamento actual: <span class="text-slate-200">{{ inst.idDepartamentoActual || '—' }}</span></p>
+                <p>Nodo actual: <span class="text-slate-200">{{ inst.nodoActualId || '—' }}</span></p>
+              </div>
+
+              @if (inst.estado === 'CANCELADO' && inst.motivoRechazo) {
+                <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-xs text-red-300">
+                  Motivo de rechazo: {{ inst.motivoRechazo }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </main>
+</div>
