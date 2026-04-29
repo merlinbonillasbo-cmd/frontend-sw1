@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
-import { TareaService, Tarea } from '../../core/services/tarea.service';
+import { TareaService, Tarea, TareaHecha } from '../../core/services/tarea.service';
 import { InstanciaService, Instancia, CampoFormulario } from '../../core/services/instancia.service';
 import { PoliticaService, Politica } from '../../core/services/politica.service';
 import { QuejasService, Queja } from '../../core/services/quejas.service';
@@ -29,6 +29,7 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
   // Tareas
   tareasPendientes = signal<Tarea[]>([]);
   tareasEnAtencion = signal<Tarea[]>([]);
+  tareasHechas = signal<TareaHecha[]>([]);
   cargandoTareas = signal(false);
 
   // Usuarios activos en el departamento
@@ -144,6 +145,10 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
         this.cargandoTareas.set(false);
       },
       error: () => this.cargandoTareas.set(false)
+    });
+    this.tareaService.porDepartamentoHechas(idDepartamento).subscribe({
+      next: data => this.tareasHechas.set(data ?? []),
+      error: () => {}
     });
   }
 

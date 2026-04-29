@@ -9,12 +9,28 @@ export interface Tarea {
   idNodo: string;
   idDepartamentoAsignado: string;
   idUsuarioAsignado?: string;
+  nombreUsuario?: string;
   semaforo?: 'ROJO' | 'AMARILLO' | 'VERDE';
   prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';
   fechaVencimiento?: string;
   fechaInicio?: string;
   fechaCreacion?: string;
   datos?: Record<string, unknown>;
+}
+
+export interface TareaHecha {
+  id: string;
+  idInstancia: string;
+  idNodo: string;
+  etiquetaNodo?: string;
+  idDepartamento: string;
+  idUsuario?: string;
+  nombreUsuario?: string;
+  fechaArchivo?: string;
+  duracionMs?: number;
+  fueRetrasado?: boolean;
+  datos?: Record<string, unknown>;
+  fechaCreacion?: string;
 }
 
 interface ApiResponse<T> {
@@ -32,6 +48,12 @@ export class TareaService {
   porDepartamento(idDepartamento: string): Observable<Tarea[]> {
     return this.http
       .get<ApiResponse<Tarea[]>>(`${this.BASE}/departamento/${idDepartamento}`)
+      .pipe(map(r => r.data));
+  }
+
+  porDepartamentoHechas(idDepartamento: string): Observable<TareaHecha[]> {
+    return this.http
+      .get<ApiResponse<TareaHecha[]>>(`http://localhost:8080/api/v1/historial/tareas/departamento/${idDepartamento}`)
       .pipe(map(r => r.data));
   }
 
