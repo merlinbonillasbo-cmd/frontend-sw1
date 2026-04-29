@@ -1,45 +1,395 @@
 <!-- src/app/supervisor/dashboard/supervisor-dashboard.component.html -->
-<div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
+<div class="min-h-screen bg-slate-950 flex">
 
-  <!-- Card central -->
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 flex flex-col items-center gap-6 shadow-2xl w-full max-w-md mx-4">
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="w-72 bg-[#1a1a2e] border-r border-slate-700 flex flex-col shrink-0">
 
-    <!-- Icono sector -->
-    <div class="w-16 h-16 rounded-2xl bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
-      <svg class="w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
-      </svg>
+    <!-- Header sidebar -->
+    <div class="p-6 border-b border-slate-700">
+      <p class="text-slate-500 text-[10px] font-semibold uppercase tracking-widest leading-none mb-1">Panel</p>
+      <h1 class="text-white text-2xl font-bold leading-tight">Supervisor</h1>
     </div>
 
-    <!-- Título -->
-    <div class="text-center">
-      <h1 class="text-white text-3xl font-bold tracking-tight">Sector Gerente</h1>
-      <p class="text-slate-400 text-sm mt-2">
-        Bienvenido, <span class="text-violet-400 font-medium">{{ auth.currentUser$()?.nombreCompleto }}</span>
+    <!-- Navegación -->
+    <nav class="flex-1 px-4 py-4 space-y-2">
+
+      <!-- Cuello de botella -->
+      <button (click)="ir('cuellos')"
+        [class.bg-violet-600]="vistaActiva() === 'cuellos'"
+        [class.text-white]="vistaActiva() === 'cuellos'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'cuellos'"
+        [class.text-slate-400]="vistaActiva() !== 'cuellos'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5"/>
+        </svg>
+        Cuello de botella
+      </button>
+
+      <!-- Rendimiento por departamento -->
+      <button (click)="ir('rendimiento')"
+        [class.bg-violet-600]="vistaActiva() === 'rendimiento'"
+        [class.text-white]="vistaActiva() === 'rendimiento'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'rendimiento'"
+        [class.text-slate-400]="vistaActiva() !== 'rendimiento'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+        </svg>
+        Rendimiento
+      </button>
+
+      <!-- Flujos atendidos -->
+      <button (click)="ir('flujos')"
+        [class.bg-violet-600]="vistaActiva() === 'flujos'"
+        [class.text-white]="vistaActiva() === 'flujos'"
+        [class.bg-slate-800/40]="vistaActiva() !== 'flujos'"
+        [class.text-slate-400]="vistaActiva() !== 'flujos'"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
+        </svg>
+        Flujos atendidos
+        @if (flujos().length > 0) {
+          <span class="ml-auto bg-violet-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            {{ flujos().length }}
+          </span>
+        }
+      </button>
+    </nav>
+
+    <!-- Footer sidebar -->
+    <div class="p-4 border-t border-slate-700">
+      <div class="flex items-center gap-3 mb-3 px-1">
+        <div class="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 text-xs font-bold uppercase shrink-0">
+          {{ auth.currentUser$()?.nombreCompleto?.charAt(0) }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white text-xs font-medium truncate">{{ auth.currentUser$()?.nombreCompleto }}</p>
+          <p class="text-violet-400 text-[10px] font-semibold uppercase">{{ auth.currentUser$()?.rol }}</p>
+        </div>
+      </div>
+      <button (click)="logout()"
+        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
+          text-slate-400 hover:text-red-400 bg-slate-800/40 hover:bg-red-500/10
+          border border-slate-700 hover:border-red-500/30 transition-all duration-200">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════ ÁREA PRINCIPAL ══════════════════════════ -->
+  <div class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 shrink-0">
+      <p class="text-slate-300 text-sm">
+        Hola, <span class="font-semibold text-white">{{ auth.currentUser$()?.nombreCompleto }}</span>
+        — Panel de supervisión
       </p>
-    </div>
+    </header>
 
-    <!-- Badge rol -->
-    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">
-      {{ auth.currentUser$()?.rol }}
-    </span>
+    <main class="flex-1 p-6 overflow-y-auto">
 
-    <!-- Placeholder contenido -->
-    <div class="w-full bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
-      <p class="text-slate-500 text-sm">Contenido del sector en construcción...</p>
-    </div>
+      <!-- ═══════════════════ VISTA: CUELLO DE BOTELLA ═══════════════════ -->
+      @if (vistaActiva() === 'cuellos') {
+        <div class="max-w-3xl">
 
-    <!-- Logout -->
-    <button (click)="logout()"
-      class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
-        text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-slate-700
-        hover:border-red-500/30 transition-all duration-200">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
-      </svg>
-      Cerrar sesión
-    </button>
+          <div class="mb-6">
+            <h2 class="text-white font-bold text-2xl mb-1">Cuello de botella</h2>
+            <p class="text-slate-400 text-sm">Departamentos con mayor cantidad de tareas retrasadas en todo el sistema.</p>
+          </div>
+
+          @if (cargandoRendimiento()) {
+            <div class="flex items-center gap-3 text-slate-500 py-10">
+              <div class="w-5 h-5 border-2 border-slate-600 border-t-violet-500 rounded-full animate-spin"></div>
+              Cargando datos...
+            </div>
+          } @else if (rendimiento().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+              <p class="text-slate-500 text-sm">Sin datos de historial aún. Los cuellos de botella aparecerán cuando se completen tareas.</p>
+            </div>
+          } @else {
+            <!-- Ranking por tareas retrasadas -->
+            <div class="space-y-3">
+              @for (dept of rendimiento(); track dept.idDepartamento; let i = $index) {
+                <div class="bg-slate-900 border rounded-xl p-5 transition-all"
+                  [class.border-red-500/40]="dept.tareasRetrasadas > 0 && i === 0"
+                  [class.border-slate-800]="!(dept.tareasRetrasadas > 0 && i === 0)">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                      <!-- Posición ranking -->
+                      <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                        [class.bg-red-500/20]="i === 0 && dept.tareasRetrasadas > 0"
+                        [class.text-red-400]="i === 0 && dept.tareasRetrasadas > 0"
+                        [class.bg-slate-700]="!(i === 0 && dept.tareasRetrasadas > 0)"
+                        [class.text-slate-400]="!(i === 0 && dept.tareasRetrasadas > 0)">
+                        {{ i + 1 }}
+                      </span>
+                      <div>
+                        <p class="text-white font-semibold text-sm">{{ dept.idDepartamento }}</p>
+                        <p class="text-slate-500 text-xs">{{ dept.totalTareas }} tareas totales</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-red-400 font-bold text-sm">{{ dept.tareasRetrasadas }} retrasadas</p>
+                      <p class="text-slate-500 text-xs">{{ dept.porcentajeRetraso }}% de retraso</p>
+                    </div>
+                  </div>
+                  <!-- Barra de retraso -->
+                  <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500"
+                      [style.width.%]="barWidth(dept.tareasRetrasadas, maxTareasRetrasadas())"
+                      [class.bg-red-500]="dept.porcentajeRetraso >= 50"
+                      [class.bg-orange-400]="dept.porcentajeRetraso >= 20 && dept.porcentajeRetraso < 50"
+                      [class.bg-emerald-500]="dept.porcentajeRetraso < 20">
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-slate-600 text-xs">Tiempo promedio: {{ formatMs(dept.duracionPromedioMs) }}</span>
+                    @if (i === 0 && dept.tareasRetrasadas > 0) {
+                      <span class="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/30">
+                        MAYOR PROBLEMA
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Nodos lentos (top 5) -->
+            @if (!cargandoCuellos() && cuellos().length > 0) {
+              <div class="mt-8">
+                <h3 class="text-slate-300 font-semibold text-base mb-3 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                  </svg>
+                  Top 5 nodos más lentos del sistema
+                </h3>
+                <div class="space-y-2">
+                  @for (cuello of cuellos(); track cuello.idNodo; let j = $index) {
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+                      <span class="text-slate-600 text-xs font-bold w-4 shrink-0">{{ j + 1 }}</span>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-slate-300 text-sm font-medium truncate">
+                          {{ cuello.etiquetaNodo || cuello.idNodo }}
+                        </p>
+                        <div class="h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                          <div class="h-full bg-orange-500/70 rounded-full"
+                            [style.width.%]="barWidth(cuello.duracionPromedioMs, maxDuracion())">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <p class="text-orange-400 text-sm font-bold">{{ formatMs(cuello.duracionPromedioMs) }}</p>
+                        <p class="text-slate-600 text-xs">{{ cuello.totalTareas }} tareas</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- ═══════════════════ VISTA: RENDIMIENTO ═══════════════════ -->
+      @if (vistaActiva() === 'rendimiento') {
+        <div class="max-w-3xl">
+
+          <div class="mb-6">
+            <h2 class="text-white font-bold text-2xl mb-1">Rendimiento por departamento</h2>
+            <p class="text-slate-400 text-sm">Ranking de departamentos por cantidad de tareas completadas.</p>
+          </div>
+
+          @if (cargandoRendimiento()) {
+            <div class="flex items-center gap-3 text-slate-500 py-10">
+              <div class="w-5 h-5 border-2 border-slate-600 border-t-violet-500 rounded-full animate-spin"></div>
+              Cargando...
+            </div>
+          } @else if (rendimiento().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+              <p class="text-slate-500 text-sm">Sin datos de historial aún.</p>
+            </div>
+          } @else {
+            <!-- Podio top 3 -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+              @for (dept of rendimiento().slice(0, 3); track dept.idDepartamento; let i = $index) {
+                <div class="bg-slate-900 border rounded-xl p-4 text-center"
+                  [class.border-yellow-500/50]="i === 0"
+                  [class.border-slate-500/40]="i === 1"
+                  [class.border-amber-700/40]="i === 2"
+                  [class.border-slate-800]="i > 2">
+                  <p class="text-2xl mb-1">{{ i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉' }}</p>
+                  <p class="text-white font-bold text-sm truncate">{{ dept.idDepartamento }}</p>
+                  <p class="text-violet-400 font-bold text-xl mt-1">{{ dept.totalTareas }}</p>
+                  <p class="text-slate-500 text-xs">tareas hechas</p>
+                </div>
+              }
+            </div>
+
+            <!-- Lista completa con barra -->
+            <div class="space-y-2">
+              @for (dept of rendimiento(); track dept.idDepartamento; let i = $index) {
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="text-slate-500 text-xs font-bold w-5 shrink-0 text-right">{{ i + 1 }}</span>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-1.5">
+                        <p class="text-white text-sm font-medium truncate">{{ dept.idDepartamento }}</p>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <span class="text-slate-400 text-xs">{{ dept.totalTareas }} tareas</span>
+                          @if (dept.tareasRetrasadas > 0) {
+                            <span class="text-red-400 text-xs">{{ dept.tareasRetrasadas }} retrasadas</span>
+                          }
+                        </div>
+                      </div>
+                      <!-- Barra tareas totales -->
+                      <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-violet-500 rounded-full transition-all duration-500"
+                          [style.width.%]="barWidth(dept.totalTareas, maxTotalTareas())">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4 pl-8">
+                    <span class="text-slate-600 text-xs">Promedio: {{ formatMs(dept.duracionPromedioMs) }}</span>
+                    <span class="text-slate-600 text-xs">Retraso: {{ dept.porcentajeRetraso }}%</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ═══════════════════ VISTA: FLUJOS ATENDIDOS ═══════════════════ -->
+      @if (vistaActiva() === 'flujos') {
+        <div class="max-w-4xl">
+
+          <div class="mb-6 flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-white font-bold text-2xl mb-1">Flujos atendidos</h2>
+              <p class="text-slate-400 text-sm">Historial completo de todos los trámites del sistema.</p>
+            </div>
+            <!-- Filtro por estado -->
+            <div class="flex items-center gap-2 shrink-0 flex-wrap">
+              <button (click)="filtroEstado.set('TODOS')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
+                [class.bg-violet-600]="filtroEstado() === 'TODOS'"
+                [class.text-white]="filtroEstado() === 'TODOS'"
+                [class.border-violet-600]="filtroEstado() === 'TODOS'"
+                [class.bg-slate-800]="filtroEstado() !== 'TODOS'"
+                [class.text-slate-400]="filtroEstado() !== 'TODOS'"
+                [class.border-slate-700]="filtroEstado() !== 'TODOS'">Todos</button>
+              <button (click)="filtroEstado.set('COMPLETADO')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
+                [class.bg-violet-600]="filtroEstado() === 'COMPLETADO'"
+                [class.text-white]="filtroEstado() === 'COMPLETADO'"
+                [class.border-violet-600]="filtroEstado() === 'COMPLETADO'"
+                [class.bg-slate-800]="filtroEstado() !== 'COMPLETADO'"
+                [class.text-slate-400]="filtroEstado() !== 'COMPLETADO'"
+                [class.border-slate-700]="filtroEstado() !== 'COMPLETADO'">Completado</button>
+              <button (click)="filtroEstado.set('EN_PROCESO')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
+                [class.bg-violet-600]="filtroEstado() === 'EN_PROCESO'"
+                [class.text-white]="filtroEstado() === 'EN_PROCESO'"
+                [class.border-violet-600]="filtroEstado() === 'EN_PROCESO'"
+                [class.bg-slate-800]="filtroEstado() !== 'EN_PROCESO'"
+                [class.text-slate-400]="filtroEstado() !== 'EN_PROCESO'"
+                [class.border-slate-700]="filtroEstado() !== 'EN_PROCESO'">En proceso</button>
+              <button (click)="filtroEstado.set('CANCELADO')"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
+                [class.bg-violet-600]="filtroEstado() === 'CANCELADO'"
+                [class.text-white]="filtroEstado() === 'CANCELADO'"
+                [class.border-violet-600]="filtroEstado() === 'CANCELADO'"
+                [class.bg-slate-800]="filtroEstado() !== 'CANCELADO'"
+                [class.text-slate-400]="filtroEstado() !== 'CANCELADO'"
+                [class.border-slate-700]="filtroEstado() !== 'CANCELADO'">Cancelado</button>
+            </div>
+          </div>
+
+          @if (cargandoFlujos()) {
+            <div class="flex items-center gap-3 text-slate-500 py-10">
+              <div class="w-5 h-5 border-2 border-slate-600 border-t-violet-500 rounded-full animate-spin"></div>
+              Cargando flujos...
+            </div>
+          } @else if (flujosFiltrados().length === 0) {
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+              <p class="text-slate-500 text-sm">No hay flujos con el estado seleccionado.</p>
+            </div>
+          } @else {
+            <!-- Contadores rápidos -->
+            <div class="grid grid-cols-4 gap-3 mb-5">
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                <p class="text-white text-2xl font-bold">{{ flujos().length }}</p>
+                <p class="text-slate-500 text-xs mt-1">Total</p>
+              </div>
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                <p class="text-emerald-400 text-2xl font-bold">{{ contarEstado('COMPLETADO') }}</p>
+                <p class="text-slate-500 text-xs mt-1">Completados</p>
+              </div>
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                <p class="text-yellow-400 text-2xl font-bold">{{ contarEstado('EN_PROCESO') }}</p>
+                <p class="text-slate-500 text-xs mt-1">En proceso</p>
+              </div>
+              <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                <p class="text-red-400 text-2xl font-bold">{{ contarEstado('CANCELADO') }}</p>
+                <p class="text-slate-500 text-xs mt-1">Cancelados</p>
+              </div>
+            </div>
+
+            <!-- Lista de flujos -->
+            <div class="space-y-2">
+              @for (flujo of flujosFiltrados(); track flujo.id) {
+                <div class="bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl p-4 transition-all">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-white font-semibold text-sm truncate">
+                          {{ getNombreFlujo(flujo) }}
+                        </h3>
+                        @if (getCodigoCaso(flujo)) {
+                          <span class="text-slate-500 text-xs shrink-0">{{ getCodigoCaso(flujo) }}</span>
+                        }
+                      </div>
+                      <!-- Motivo rechazo -->
+                      @if (flujo.estado === 'CANCELADO' && flujo.motivoRechazo) {
+                        <div class="flex items-start gap-1.5 mt-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                          <svg class="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                          </svg>
+                          <p class="text-red-300 text-xs">{{ flujo.motivoRechazo }}</p>
+                        </div>
+                      }
+                    </div>
+                    <div class="flex flex-col items-end gap-2 shrink-0">
+                      <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border"
+                        [class]="estadoBadgeClass(flujo.estado)">
+                        {{ flujo.estado === 'EN_PROCESO' ? 'EN PROCESO' : flujo.estado === 'EN_ESPERA' ? 'EN ESPERA' : flujo.estado }}
+                      </span>
+                      @if (flujo.fechaCreacion) {
+                        <span class="text-slate-600 text-xs">
+                          {{ flujo.fechaCreacion | slice:0:10 }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+    </main>
   </div>
 </div>
+

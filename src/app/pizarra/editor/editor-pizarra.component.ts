@@ -5,6 +5,7 @@ import {
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FluiosApiService, FlujoDefinicion } from '../services/flujos-api.service';
@@ -19,6 +20,7 @@ import { PanelPropiedadesComponent } from './panel-propiedades/panel-propiedades
   selector: 'app-editor-pizarra',
   standalone: true,
   imports: [CommonModule, FormsModule, PanelDepartamentosComponent, PanelPropiedadesComponent],
+  // HttpClient se provee a nivel de app (provideHttpClient)
   templateUrl: './editor-pizarra.component.html',
   styleUrls: ['./editor-pizarra.component.css'],
 })
@@ -51,6 +53,18 @@ export class EditorPizarraComponent implements OnInit, AfterViewInit, OnDestroy 
   readonly panelIzqAbierto = signal(true);
   readonly panelDerAbierto = signal(true);
 
+  // ── Chat BPMN ─────────────────────────────────────────────────────────────
+  chatAbierto = signal(false);
+  chatMensajes = signal<{ rol: 'user' | 'bot'; texto: string; titulo?: string }[]>([
+    {
+      rol: 'bot',
+      titulo: 'Asistente BPMN',
+      texto: '¡Hola! Soy tu asistente BPMN. Puedo explicarte para qué sirve cada figura del diagrama. ¿Sobre qué elemento tienes dudas?'
+    }
+  ]);
+  chatInput = signal('');
+  enviandoChat = signal(false);
+
   private flujoId: string | null = null;
   private subs = new Subscription();
   private readonly platformId = inject(PLATFORM_ID);
@@ -69,8 +83,50 @@ export class EditorPizarraComponent implements OnInit, AfterViewInit, OnDestroy 
     public bpmn: BpmnService,
     private colabService: ColaboracionService,
     private auth: AuthService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private http: HttpClient
   ) {}
+
+  // ── Chat BPMN ─────────────────────────────────────────────────────────────
+  toggleChat(): void {
+    this.chatAbierto.set(!this.chatAbierto());
+  }
+
+  enviarMensajeChat(): void {
+    const texto = this.chatInput().trim();
+    if (!texto || this.enviandoChat()) return;
+
+    this.chatMensajes.update(msgs => [...msgs, { rol: 'user', texto }]);
+    this.chatInput.set('');
+    this.enviandoChat.set(true);
+
+    this.http.post<{ titulo: string; respuesta: string }>(
+      'http://localhost:8001/chat',
+      { pregunta: texto }
+    ).subscribe({
+      next: (res) => {
+        this.chatMensajes.update(msgs => [
+          ...msgs,
+          { rol: 'bot', titulo: res.titulo, texto: res.respuesta }
+        ]);
+        this.enviandoChat.set(false);
+      },
+      error: () => {
+        this.chatMensajes.update(msgs => [
+          ...msgs,
+          { rol: 'bot', titulo: 'Error', texto: 'No pude conectarme al asistente. Asegúrate de que el servicio de IA esté activo (puerto 8001).' }
+        ]);
+        this.enviandoChat.set(false);
+      }
+    });
+  }
+
+  chatKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.enviarMensajeChat();
+    }
+  }
 
   ngOnInit(): void {
     this.flujoId = this.route.snapshot.paramMap.get('id');
