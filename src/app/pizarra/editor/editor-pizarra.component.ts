@@ -101,7 +101,7 @@ export class EditorPizarraComponent implements OnInit, AfterViewInit, OnDestroy 
     this.enviandoChat.set(true);
 
     this.http.post<{ titulo: string; respuesta: string }>(
-      'http://localhost:8001/chat',
+      'http://18.222.251.205:8000/chat',
       { pregunta: texto }
     ).subscribe({
       next: (res) => {

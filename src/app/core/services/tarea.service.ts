@@ -41,7 +41,7 @@ interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class TareaService {
-  private readonly BASE = 'http://localhost:8080/api/v1/tareas';
+  private readonly BASE = 'http://18.222.251.205:8080/api/v1/tareas';
 
   constructor(private http: HttpClient) {}
 
@@ -53,7 +53,7 @@ export class TareaService {
 
   porDepartamentoHechas(idDepartamento: string): Observable<TareaHecha[]> {
     return this.http
-      .get<ApiResponse<TareaHecha[]>>(`http://localhost:8080/api/v1/historial/tareas/departamento/${idDepartamento}`)
+      .get<ApiResponse<TareaHecha[]>>(`http://18.222.251.205:8080/api/v1/historial/tareas/departamento/${idDepartamento}`)
       .pipe(map(r => r.data));
   }
 

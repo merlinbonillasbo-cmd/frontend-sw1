@@ -68,8 +68,8 @@ interface PageResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private readonly BASE = 'http://localhost:8080/api/v1/admin';
-  private readonly ROLES_BASE = 'http://localhost:8080/api/v1/roles';
+  private readonly BASE = 'http://18.222.251.205:8080/api/v1/admin';
+  private readonly ROLES_BASE = 'http://18.222.251.205:8080/api/v1/roles';
 
   constructor(private http: HttpClient) {}
 

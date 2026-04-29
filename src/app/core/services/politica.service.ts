@@ -20,7 +20,7 @@ interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class PoliticaService {
-  private readonly BASE = 'http://localhost:8080/api/v1/politicas';
+  private readonly BASE = 'http://18.222.251.205:8080/api/v1/politicas';
 
   constructor(private http: HttpClient) {}
 
