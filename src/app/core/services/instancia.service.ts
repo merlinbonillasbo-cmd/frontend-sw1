@@ -32,7 +32,7 @@ interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class InstanciaService {
-  private readonly BASE = 'http://18.222.251.205:8080/api/v1/instancias';
+  private readonly BASE = 'http://18.224.95.208:8080/api/v1/instancias';
 
   constructor(private http: HttpClient) {}
 

@@ -31,7 +31,7 @@ export class ColaboracionService implements OnDestroy {
     this.userId = userId;
 
     this.client = new Client({
-      brokerURL: 'ws://18.222.251.205:8080/ws/websocket',
+      brokerURL: 'ws://18.224.95.208:8080/ws/websocket',
       reconnectDelay: 5000,
       onConnect: () => {
         // ── Actualizaciones del diagrama ─────────────────────────────────
