@@ -19,8 +19,9 @@ import { FluiosApiService, FlujoDefinicion } from '../../pizarra/services/flujos
 import { TareaService, Tarea } from '../../core/services/tarea.service';
 import { InstanciaService, CampoFormulario } from '../../core/services/instancia.service';
 import { OfficerWebSocketService, Notificacion } from '../../officer/services/officer-websocket.service';
+import { jsPDF } from 'jspdf';
 
-type Section = 'dashboard' | 'usuarios' | 'departamentos' | 'roles' | 'flujos' | 'tareas' | 'formulario' | 'pizarra';
+type Section = 'dashboard' | 'usuarios' | 'departamentos' | 'roles' | 'flujos' | 'tareas' | 'formulario' | 'pizarra' | 'reportes';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -32,6 +33,24 @@ type Section = 'dashboard' | 'usuarios' | 'departamentos' | 'roles' | 'flujos' |
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   activeSection = signal<Section>('dashboard');
   sidebarOpen = signal(true);
+
+  // Reportes Auditoría
+  auditLogs = signal<any[]>([]);
+  auditLoading = signal(false);
+  reportQuery = signal('');
+
+  readonly filteredAuditLogs = computed(() => {
+    const q = this.normalizarTexto(this.reportQuery());
+    const base = this.auditLogs();
+    if (!q) return base;
+    return base.filter(log => {
+      const actor = this.normalizarTexto(log.actorId ?? '');
+      const action = this.normalizarTexto(log.action ?? '');
+      const comment = this.normalizarTexto(log.comment ?? '');
+      const node = this.normalizarTexto(log.nodeLabel ?? '');
+      return actor.includes(q) || action.includes(q) || comment.includes(q) || node.includes(q);
+    });
+  });
 
   // Usuario data
   usuarios = signal<UsuarioResponse[]>([]);
@@ -84,6 +103,33 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // Datos que viajan en el flujo
   datosEntrada = signal<Record<string, any>>({});
   tieneDatosEntrada = computed(() => Object.keys(this.datosEntrada()).length > 0);
+
+  // Documentos adjuntos del trámite (detectados a partir de los datos acumulados)
+  documentosTramite = computed(() => {
+    const datos = this.datosEntrada();
+    const docs: { campo: string; nombreArchivo: string }[] = [];
+    for (const [key, val] of Object.entries(datos)) {
+      if (typeof val === 'string' && val.trim() !== '') {
+        const lowerVal = val.toLowerCase();
+        const lowerKey = key.toLowerCase();
+        const esArchivo = lowerVal.endsWith('.pdf') || 
+                          lowerVal.endsWith('.png') || 
+                          lowerVal.endsWith('.jpg') || 
+                          lowerVal.endsWith('.jpeg') || 
+                          lowerVal.endsWith('.doc') || 
+                          lowerVal.endsWith('.docx') ||
+                          lowerKey.includes('archivo') ||
+                          lowerKey.includes('documento') ||
+                          lowerKey.includes('pdf') ||
+                          lowerKey.includes('imagen') ||
+                          lowerKey.includes('foto');
+        if (esArchivo) {
+          docs.push({ campo: key, nombreArchivo: val });
+        }
+      }
+    }
+    return docs;
+  });
   departamentosDestino = signal<string[]>([]);
   crearUsuarioCliente = signal(false);
   clienteCreado = signal(false);
@@ -192,11 +238,98 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       const codigo = this.deptCodigo();
       if (codigo) this.cargarTareas(codigo);
     }
+    if (section === 'reportes') {
+      this.loadAuditLogs();
+    }
   }
 
   abrirPizarra(url: string = '/pizarra'): void {
     this.pizarraUrl.set(url);
     this.activeSection.set('pizarra');
+  }
+
+  // ─── Auditoría ───────────────────────────────────────────
+  loadAuditLogs(): void {
+    this.auditLoading.set(true);
+    this.adminService.getAuditLogs().subscribe({
+      next: data => {
+        this.auditLogs.set(data.sort((a, b) => {
+          const tA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+          const tB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+          return tB - tA;
+        }));
+        this.auditLoading.set(false);
+      },
+      error: () => this.auditLoading.set(false)
+    });
+  }
+
+  exportToPDF(): void {
+    try {
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Reporte de Auditoria de Seguridad', 14, 22);
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Generado el: ${new Date().toLocaleString()}`, 14, 30);
+      
+      doc.setDrawColor(200);
+      doc.line(14, 33, 196, 33);
+      
+      let y = 40;
+      const logs = this.filteredAuditLogs();
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(50);
+      doc.text('Fecha', 14, y);
+      doc.text('Usuario/Actor', 50, y);
+      doc.text('Accion', 95, y);
+      doc.text('Detalle', 130, y);
+      
+      doc.line(14, y + 2, 196, y + 2);
+      y += 8;
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(80);
+      
+      logs.forEach(log => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(50);
+          doc.text('Fecha', 14, y);
+          doc.text('Usuario/Actor', 50, y);
+          doc.text('Accion', 95, y);
+          doc.text('Detalle', 130, y);
+          doc.line(14, y + 2, 196, y + 2);
+          y += 8;
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(80);
+        }
+        
+        const fecha = log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A';
+        const actor = log.actorId || 'Sistema';
+        const action = log.action || 'OTRO';
+        const comment = log.comment || '';
+        
+        doc.text(fecha, 14, y);
+        doc.text(actor.substring(0, 22), 50, y);
+        doc.text(action.substring(0, 18), 95, y);
+        
+        const splitComment = doc.splitTextToSize(comment, 65);
+        doc.text(splitComment, 130, y);
+        
+        y += Math.max(splitComment.length * 4.5 + 2, 8);
+      });
+      
+      doc.save(`reporte_auditoria_${new Date().toISOString().slice(0,10)}.pdf`);
+      this.mostrarToast('Reporte exportado a PDF correctamente');
+    } catch (e) {
+      console.error(e);
+      this.mostrarToast('Error al exportar a PDF');
+    }
   }
 
   // ─── Tareas ───────────────────────────────────────────────
@@ -288,6 +421,23 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       datos[nombreCampo] = file.name;
       this.datosFormulario.set(datos);
     }
+  }
+
+  /** Simula la descarga o visualización de un archivo */
+  verDocumento(nombreArchivo: string): void {
+    const contenido = `Contenido simulado para el documento: ${nombreArchivo}\nGenerado el: ${new Date().toLocaleString()}\nValidador de Trazabilidad de Auditoría`;
+    const blob = new Blob([contenido], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nombreArchivo.endsWith('.pdf') || nombreArchivo.endsWith('.png') || nombreArchivo.endsWith('.jpg')
+      ? nombreArchivo
+      : `${nombreArchivo}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    this.mostrarToast(`Descargando documento: ${nombreArchivo}`);
   }
 
   completarTarea(): void {

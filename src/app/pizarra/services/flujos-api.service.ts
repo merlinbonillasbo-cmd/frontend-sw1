@@ -28,7 +28,7 @@ interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class FluiosApiService {
-  private readonly BASE = 'http://18.224.95.208:8080/api/v1/politicas';
+  private readonly BASE = 'http://localhost:8080/api/v1/politicas';
 
   constructor(private http: HttpClient) {}
 

@@ -38,11 +38,39 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
   // Formulario dinámico
   camposFormulario = signal<CampoFormulario[]>([]);
   datosFormulario = signal<Record<string, any>>({});
+  datosEntrada = signal<Record<string, any>>({});
   archivosFormulario: Record<string, File> = {};
   tareaActualId = signal<string | null>(null);
   nodoActualLabel = signal<string>('');
   departamentosDestino = signal<string[]>([]);
   guardandoFormulario = signal(false);
+
+  // Documentos adjuntos del trámite (detectados a partir de los datos acumulados)
+  documentosTramite = computed(() => {
+    const datos = this.datosEntrada();
+    const docs: { campo: string; nombreArchivo: string }[] = [];
+    for (const [key, val] of Object.entries(datos)) {
+      if (typeof val === 'string' && val.trim() !== '') {
+        const lowerVal = val.toLowerCase();
+        const lowerKey = key.toLowerCase();
+        const esArchivo = lowerVal.endsWith('.pdf') || 
+                          lowerVal.endsWith('.png') || 
+                          lowerVal.endsWith('.jpg') || 
+                          lowerVal.endsWith('.jpeg') || 
+                          lowerVal.endsWith('.doc') || 
+                          lowerVal.endsWith('.docx') ||
+                          lowerKey.includes('archivo') ||
+                          lowerKey.includes('documento') ||
+                          lowerKey.includes('pdf') ||
+                          lowerKey.includes('imagen') ||
+                          lowerKey.includes('foto');
+        if (esArchivo) {
+          docs.push({ campo: key, nombreArchivo: val });
+        }
+      }
+    }
+    return docs;
+  });
 
   // Políticas publicadas (para iniciar nuevo trámite)
   politicasActivas = signal<Politica[]>([]);
@@ -195,6 +223,7 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
       next: data => {
         this.camposFormulario.set(data.campos || []);
         this.nodoActualLabel.set(data.nodoLabel ?? '');
+        this.datosEntrada.set(data.datosEntrada || {});
         const destinos = data.departamentosDestino ?? (data.departamentoDestino ? [data.departamentoDestino] : []);
         this.departamentosDestino.set(destinos);
         const init: Record<string, any> = {};
@@ -207,6 +236,7 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
         // Still open the view with an empty fallback so officer can continue
         this.camposFormulario.set([{ nombre: 'observaciones', tipo: 'texto', requerido: false }]);
         this.datosFormulario.set({ observaciones: '' });
+        this.datosEntrada.set({});
         this.departamentosDestino.set([]);
         this.navegarA('enviar');
       }
@@ -229,6 +259,23 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Simula la descarga o visualización de un archivo */
+  verDocumento(nombreArchivo: string): void {
+    const contenido = `Contenido simulado para el documento: ${nombreArchivo}\nGenerado el: ${new Date().toLocaleString()}\nValidador de Trazabilidad de Auditoría`;
+    const blob = new Blob([contenido], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nombreArchivo.endsWith('.pdf') || nombreArchivo.endsWith('.png') || nombreArchivo.endsWith('.jpg')
+      ? nombreArchivo
+      : `${nombreArchivo}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    this.mostrarToast(`Descargando documento: ${nombreArchivo}`);
+  }
+
   /** Complete task (AMARILLO → VERDE) and trigger next node */
   completarTarea(): void {
     const id = this.tareaActualId();
@@ -248,6 +295,7 @@ export class OfficerDashboardComponent implements OnInit, OnDestroy {
         this.tareaActualId.set(null);
         this.camposFormulario.set([]);
         this.datosFormulario.set({});
+        this.datosEntrada.set({});
         this.archivosFormulario = {};
         this.nodoActualLabel.set('');
         this.departamentosDestino.set([]);

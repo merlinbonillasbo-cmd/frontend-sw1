@@ -123,6 +123,18 @@
         }
       </button>
 
+      <button (click)="navigate('reportes')"
+        [class.bg-sky-500]="activeSection() === 'reportes'"
+        [class.text-white]="activeSection() === 'reportes'"
+        [class.text-slate-400]="activeSection() !== 'reportes'"
+        [class.hover:bg-slate-800]="activeSection() !== 'reportes'"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <span class="flex-1 text-left">Reportes de Auditoría</span>
+      </button>
+
     </nav>
 
     <!-- Logout -->
@@ -154,6 +166,7 @@
             @case ('tareas') { Mis Tareas }
             @case ('formulario') { Completar Tarea — {{ nodoActualLabel() }} }
             @case ('pizarra') { Pizarra }
+            @case ('reportes') { Reportes de Auditoría }
           }
         </h2>
 
@@ -883,6 +896,49 @@
                 </div>
               </div>
             }
+
+            <!-- Panel de Documentos Previos / Trazabilidad de Archivos -->
+            @if (documentosTramite().length > 0) {
+              <div class="bg-slate-800/20 border border-slate-700/60 rounded-xl p-5 mb-5">
+                <h3 class="text-white font-semibold text-sm mb-2 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Documentos Compartidos del Flujo
+                </h3>
+                <p class="text-slate-400 text-xs mb-4">
+                  Visualiza y descarga los documentos adjuntos que han sido creados en pasos anteriores del trámite.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  @for (doc of documentosTramite(); track doc.campo) {
+                    <div class="flex items-center gap-3 p-3 bg-slate-900/60 border border-slate-800 rounded-lg hover:border-sky-500/30 transition-colors">
+                      <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+                        @if (doc.nombreArchivo.toLowerCase().endsWith('.pdf')) {
+                          <svg class="w-4.5 h-4.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                          </svg>
+                        } @else {
+                          <svg class="w-4.5 h-4.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                          </svg>
+                        }
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-slate-500 text-[9px] font-semibold uppercase tracking-wider leading-none mb-1">{{ doc.campo }}</p>
+                        <p class="text-white text-xs font-medium truncate" [title]="doc.nombreArchivo">{{ doc.nombreArchivo }}</p>
+                      </div>
+                      <button (click)="verDocumento(doc.nombreArchivo)"
+                        class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-md border border-slate-700 hover:border-slate-600 transition-colors shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
             @for (campo of camposFormulario(); track campo.nombre) {
               <div>
                 <label class="block text-slate-300 text-sm font-medium mb-2">
@@ -995,6 +1051,121 @@
                 Completar y enviar
               </button>
             </div>
+          </div>
+        </div>
+      }
+
+      <!-- ═══════════════ REPORTES DE AUDITORÍA ═══════════════ -->
+      @if (activeSection() === 'reportes') {
+        <div class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+            <div>
+              <h3 class="text-white text-lg font-bold">Historial de Eventos de Seguridad</h3>
+              <p class="text-slate-400 text-sm">Registro de accesos, modificaciones de políticas y ejecuciones del sistema.</p>
+            </div>
+            <div class="flex gap-3">
+              <button (click)="loadAuditLogs()" [disabled]="auditLoading()"
+                class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-sm transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" [class.animate-spin]="auditLoading()" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+                Actualizar
+              </button>
+              <button (click)="exportToPDF()" [disabled]="auditLogs().length === 0"
+                class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl text-sm transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Exportar PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Filtro de Búsqueda -->
+          <div class="relative max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+            <input type="text" [ngModel]="reportQuery()" (ngModelChange)="reportQuery.set($event)"
+              placeholder="Buscar por usuario, acción o detalle..."
+              class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm
+                placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500" />
+          </div>
+
+          <!-- Tabla de Resultados -->
+          <div class="bg-slate-900/40 rounded-2xl border border-slate-800/80 overflow-hidden">
+            @if (auditLoading()) {
+              <div class="flex flex-col items-center justify-center py-20 gap-3">
+                <svg class="w-8 h-8 animate-spin text-sky-500" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                <span class="text-slate-400 text-sm">Cargando logs de auditoría...</span>
+              </div>
+            } @else if (filteredAuditLogs().length === 0) {
+              <div class="flex flex-col items-center justify-center py-16 gap-2 text-center">
+                <svg class="w-12 h-12 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h4 class="text-slate-300 font-semibold">No se encontraron registros</h4>
+                <p class="text-slate-500 text-sm">Intenta ajustar tu búsqueda o actualizar el historial.</p>
+              </div>
+            } @else {
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-slate-800 bg-slate-900/80 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                      <th class="px-6 py-4">Fecha/Hora</th>
+                      <th class="px-6 py-4">Usuario/Actor</th>
+                      <th class="px-6 py-4">Acción</th>
+                      <th class="px-6 py-4">Detalle</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/40 text-sm text-slate-300">
+                    @for (log of filteredAuditLogs(); track log.id) {
+                      <tr class="hover:bg-slate-800/20 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
+                          {{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200">
+                          <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400 uppercase">
+                              {{ (log.actorId || 'S').substring(0,2) }}
+                            </span>
+                            <span>{{ log.actorId || 'Sistema' }}</span>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span [class.bg-sky-500/10]="log.action === 'INICIO_SESION' || log.action === 'CERRAR_SESION'"
+                                [class.text-sky-400]="log.action === 'INICIO_SESION' || log.action === 'CERRAR_SESION'"
+                                [class.bg-amber-500/10]="log.action.includes('MODIFICAR') || log.action.includes('REVERTIR')"
+                                [class.text-amber-400]="log.action.includes('MODIFICAR') || log.action.includes('REVERTIR')"
+                                [class.bg-emerald-500/10]="log.action.includes('CREAR') || log.action.includes('PUBLICAR') || log.action === 'COMPLETAR_TAREA'"
+                                [class.text-emerald-400]="log.action.includes('CREAR') || log.action.includes('PUBLICAR') || log.action === 'COMPLETAR_TAREA'"
+                                [class.bg-red-500/10]="log.action.includes('ELIMINAR')"
+                                [class.text-red-400]="log.action.includes('ELIMINAR')"
+                                [class.bg-slate-800]="!log.action.includes('CREAR') && !log.action.includes('MODIFICAR') && !log.action.includes('ELIMINAR') && log.action !== 'INICIO_SESION' && log.action !== 'CERRAR_SESION' && log.action !== 'COMPLETAR_TAREA'"
+                                [class.text-slate-400]="!log.action.includes('CREAR') && !log.action.includes('MODIFICAR') && !log.action.includes('ELIMINAR') && log.action !== 'INICIO_SESION' && log.action !== 'CERRAR_SESION' && log.action !== 'COMPLETAR_TAREA'"
+                                class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase font-mono">
+                            {{ log.action }}
+                          </span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-400 max-w-md">
+                          <p class="truncate hover:text-clip hover:whitespace-normal" [title]="log.comment">{{ log.comment }}</p>
+                          @if (log.nodeLabel) {
+                            <span class="inline-flex items-center text-[10px] text-sky-400/80 bg-sky-950/40 border border-sky-800/30 px-1.5 py-0.5 rounded mt-1">
+                              Nodo: {{ log.nodeLabel }}
+                            </span>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
           </div>
         </div>
       }

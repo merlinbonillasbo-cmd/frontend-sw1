@@ -68,8 +68,8 @@ interface PageResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private readonly BASE = 'http://18.224.95.208:8080/api/v1/admin';
-  private readonly ROLES_BASE = 'http://18.224.95.208:8080/api/v1/roles';
+  private readonly BASE = 'http://localhost:8080/api/v1/admin';
+  private readonly ROLES_BASE = 'http://localhost:8080/api/v1/roles';
 
   constructor(private http: HttpClient) {}
 
@@ -151,6 +151,13 @@ export class AdminService {
   eliminarRol(id: string): Observable<void> {
     return this.http.delete<ApiResponse<void>>(`${this.ROLES_BASE}/${id}`).pipe(
       map(() => void 0)
+    );
+  }
+
+  // ─── Auditoría ───────────────────────────────────────────
+  getAuditLogs(): Observable<any[]> {
+    return this.http.get<ApiResponse<{ content: any[] }>>('http://localhost:8080/api/v1/historial?size=1000').pipe(
+      map(r => r.data?.content ?? [])
     );
   }
 }

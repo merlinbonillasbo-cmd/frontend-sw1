@@ -40,7 +40,7 @@ export interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API = 'http://18.224.95.208:8080/api/v1/auth';
+  private readonly API = 'http://localhost:8080/api/v1/auth';
 
   currentUser$ = signal<AuthUser | null>(this.loadFromStorage());
 

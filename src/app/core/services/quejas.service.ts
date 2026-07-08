@@ -22,7 +22,7 @@ interface ApiResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class QuejasService {
-  private readonly BASE = 'http://18.224.95.208:8080/api/v1/quejas';
+  private readonly BASE = 'http://localhost:8080/api/v1/quejas';
 
   constructor(private http: HttpClient) {}
 
