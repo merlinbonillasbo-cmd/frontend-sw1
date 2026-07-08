@@ -28,7 +28,7 @@ export class OfficerWebSocketService {
     if (this.client?.active) return;
 
     this.client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () => new SockJS('http://100.59.223.50:8080/ws'),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('[OfficerWS] Conectado a WebSocket');

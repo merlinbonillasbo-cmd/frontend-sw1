@@ -44,7 +44,7 @@ interface PageResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class SupervisorService {
-  private readonly BASE = 'http://localhost:8080/api/v1';
+  private readonly BASE = 'http://100.59.223.50:8080/api/v1';
 
   constructor(private http: HttpClient) {}
 

@@ -2,8 +2,8 @@
 // Ejemplo: 'http://54.123.45.67' o 'http://mi-dominio.com'
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080',
-  iaUrl: 'http://localhost:8000',
-  wsUrl: 'http://localhost:8080/ws',
-  wsBrokerUrl: 'ws://localhost:8080/ws/websocket',
+  apiUrl: 'http://100.59.223.50:8080',
+  iaUrl: 'http://100.59.223.50:8000',
+  wsUrl: 'http://100.59.223.50:8080/ws',
+  wsBrokerUrl: 'ws://100.59.223.50:8080/ws/websocket',
 };

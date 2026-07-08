@@ -68,8 +68,8 @@ interface PageResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private readonly BASE = 'http://localhost:8080/api/v1/admin';
-  private readonly ROLES_BASE = 'http://localhost:8080/api/v1/roles';
+  private readonly BASE = 'http://100.59.223.50:8080/api/v1/admin';
+  private readonly ROLES_BASE = 'http://100.59.223.50:8080/api/v1/roles';
 
   constructor(private http: HttpClient) {}
 
@@ -156,7 +156,7 @@ export class AdminService {
 
   // ─── Auditoría ───────────────────────────────────────────
   getAuditLogs(): Observable<any[]> {
-    return this.http.get<ApiResponse<{ content: any[] }>>('http://localhost:8080/api/v1/historial?size=1000').pipe(
+    return this.http.get<ApiResponse<{ content: any[] }>>('http://100.59.223.50:8080/api/v1/historial?size=1000').pipe(
       map(r => r.data?.content ?? [])
     );
   }
